@@ -129,6 +129,25 @@ All external calls (ATS APIs, Claude) are mocked; tests run against in-memory SQ
 
 Secrets live only in `.env` (gitignored). Never commit it.
 
+## Deploying to Vercel
+
+The repo includes `vercel.json` + `api/index.py`, so Vercel builds it as a
+Python serverless app automatically once the project is linked to this GitHub
+repo. Three environment variables are required in the Vercel project settings:
+
+| Var | Value |
+|---|---|
+| `DATABASE_URL` | a hosted Postgres URL (e.g. free [Neon](https://neon.tech): `postgresql+psycopg2://user:pass@host/db?sslmode=require`) |
+| `DASHBOARD_PASSWORD` | any password — **without it your data and API key are public** |
+| `ANTHROPIC_API_KEY` | for the Tailor button |
+
+Serverless caveats: without `DATABASE_URL` the app falls back to SQLite in
+`/tmp`, which is wiped between invocations — fine for a smoke test, useless for
+real data. The `[ml]` embeddings extra doesn't fit in a serverless bundle, so
+matching uses the TF-IDF fallback there; run `python -m app.cli match --all`
+locally (pointing `DATABASE_URL` at the same Postgres) for embedding-quality
+scores. GitHub Pages is static-only and cannot host this app.
+
 ## Phase 2 roadmap
 
 1. **Playwright auto-apply for Greenhouse & Lever** — fill forms from the

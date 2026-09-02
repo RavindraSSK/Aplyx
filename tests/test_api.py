@@ -19,6 +19,19 @@ def test_health(client):
     assert client.get("/health").json() == {"status": "ok"}
 
 
+def test_basic_auth_when_password_set(client, monkeypatch):
+    from app.config import get_settings
+
+    settings = get_settings().model_copy(update={"dashboard_password": "hunter2"})
+    monkeypatch.setattr("app.main.get_settings", lambda: settings)
+
+    assert client.get("/jobs").status_code == 401
+    ok = client.get("/jobs", auth=("me", "hunter2"))
+    assert ok.status_code == 200
+    bad = client.get("/jobs", auth=("me", "wrong"))
+    assert bad.status_code == 401
+
+
 def test_dashboard_served_at_root(client):
     resp = client.get("/")
     assert resp.status_code == 200
