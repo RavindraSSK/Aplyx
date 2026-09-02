@@ -52,13 +52,26 @@ Pipeline per job: `discovered → matched → tailored → ready_to_apply → ap
 
 ## Setup
 
+macOS / Linux:
+
 ```bash
 make setup            # venv + deps, copies .env.example -> .env
-# then:
-#   1. put your ANTHROPIC_API_KEY in .env
-#   2. paste your real resume into data/resume.md
-#   3. edit data/targets.yaml with companies you care about
 ```
+
+Windows (Git Bash — no `make` needed):
+
+```bash
+python -m venv .venv
+source .venv/Scripts/activate
+pip install -e ".[dev]"
+cp .env.example .env
+```
+
+Then in both cases:
+
+1. put your `ANTHROPIC_API_KEY` in `.env`
+2. paste your real resume into `data/resume.md`
+3. edit `data/targets.yaml` with companies you care about
 
 Optional extras:
 
