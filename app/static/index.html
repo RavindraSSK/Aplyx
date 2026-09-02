@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jobagent</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1a1d21; --muted: #6b7280;
+    --border: #e5e7eb; --accent: #2563eb; --accent-soft: #dbeafe;
+    --good: #16a34a; --mid: #d97706; --bad: #9ca3af; --danger: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header {
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  header h1 { font-size: 18px; margin: 0 16px 0 0; }
+  header h1 span { color: var(--accent); }
+  .chip {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 999px;
+    padding: 3px 12px; font-size: 12.5px; color: var(--muted);
+  }
+  .chip b { color: var(--text); }
+  .spacer { flex: 1; }
+  button {
+    font: inherit; border: 1px solid var(--border); background: var(--card);
+    border-radius: 8px; padding: 7px 14px; cursor: pointer; color: var(--text);
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { opacity: .9; color: #fff; }
+  button:disabled { opacity: .5; cursor: wait; }
+  .controls {
+    padding: 14px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .controls input, .controls select {
+    font: inherit; padding: 7px 10px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--card); color: var(--text);
+  }
+  .controls input[type="number"] { width: 80px; }
+  .controls input[type="search"] { width: 240px; }
+  main { padding: 0 24px 40px; }
+  table {
+    width: 100%; border-collapse: collapse; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  thead th {
+    text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--border);
+    background: var(--card); position: sticky; top: 0;
+  }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #fafbfc; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .score {
+    display: inline-block; min-width: 44px; text-align: center; font-weight: 600;
+    border-radius: 6px; padding: 2px 8px; color: #fff; background: var(--bad);
+  }
+  .score.high { background: var(--good); }
+  .score.mid { background: var(--mid); }
+  .muted { color: var(--muted); font-size: 12.5px; }
+  .remote-tag {
+    font-size: 11px; background: var(--accent-soft); color: var(--accent);
+    border-radius: 4px; padding: 1px 6px; margin-left: 6px;
+  }
+  select.status { font: inherit; padding: 5px 6px; border-radius: 6px; border: 1px solid var(--border); }
+  .row-actions { display: flex; gap: 6px; }
+  .row-actions button { padding: 5px 10px; font-size: 12.5px; }
+  details.reasons { margin-top: 4px; }
+  details.reasons summary { cursor: pointer; font-size: 12px; color: var(--muted); }
+  details.reasons ul { margin: 4px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); }
+  /* modal */
+  dialog {
+    border: 1px solid var(--border); border-radius: 12px; padding: 0;
+    width: min(900px, 92vw); max-height: 85vh;
+  }
+  dialog::backdrop { background: rgba(0,0,0,.35); }
+  .modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px; border-bottom: 1px solid var(--border);
+  }
+  .modal-head h2 { font-size: 15px; margin: 0; }
+  .modal-body { overflow: auto; max-height: 70vh; padding: 12px 18px; }
+  pre.diff {
+    margin: 0; font: 12.5px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap;
+  }
+  pre.diff .add { background: #dcfce7; color: #14532d; display: block; }
+  pre.diff .del { background: #fee2e2; color: #7f1d1d; display: block; }
+  pre.diff .hunk { color: var(--accent); display: block; }
+  #toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: #fff; padding: 10px 18px; border-radius: 8px;
+    opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 80vw;
+  }
+  #toast.show { opacity: 1; }
+  #toast.error { background: var(--danger); }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>job<span>agent</span></h1>
+  <span class="chip">jobs <b id="stat-total">–</b></span>
+  <span class="chip">score &gt; 0 <b id="stat-scored">–</b></span>
+  <span class="chip">tailored <b id="stat-tailored">–</b></span>
+  <span class="spacer"></span>
+  <button id="btn-discover">Run discovery</button>
+  <button id="btn-match">Re-match all</button>
+</header>
+
+<div class="controls">
+  <label>Min score <input type="number" id="min-score" value="0" min="0" max="100"></label>
+  <input type="search" id="search" placeholder="Filter by title / company / location…">
+  <select id="status-filter">
+    <option value="">All statuses</option>
+  </select>
+  <span class="muted" id="shown-count"></span>
+</div>
+
+<main>
+  <table>
+    <thead>
+      <tr>
+        <th>Score</th><th>Job</th><th>Location</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="empty" id="empty" hidden>No jobs match. Run discovery, or lower the score filter.</div>
+</main>
+
+<dialog id="modal">
+  <div class="modal-head">
+    <h2 id="modal-title">Diff</h2>
+    <button onclick="document.getElementById('modal').close()">Close</button>
+  </div>
+  <div class="modal-body"><pre class="diff" id="modal-diff"></pre></div>
+</dialog>
+
+<div id="toast"></div>
+
+<script>
+const STATUSES = ["discovered","matched","tailored","ready_to_apply","applied","interview","rejected"];
+let JOBS = [];
+
+const $ = id => document.getElementById(id);
+
+function toast(msg, isError=false) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "show" + (isError ? " error" : "");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.className = "", 3500);
+}
+
+async function api(path, opts={}) {
+  const resp = await fetch(path, opts);
+  if (!resp.ok) {
+    let detail = resp.statusText;
+    try { detail = (await resp.json()).detail || detail; } catch {}
+    throw new Error(detail);
+  }
+  return resp;
+}
+
+function scoreClass(s) {
+  if (s === null || s === undefined) return "";
+  return s >= 50 ? "high" : s > 20 ? "mid" : "";
+}
+
+function esc(s) {
+  return (s ?? "").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+function render() {
+  const minScore = parseFloat($("min-score").value) || 0;
+  const q = $("search").value.toLowerCase();
+  const statusFilter = $("status-filter").value;
+
+  const filtered = JOBS.filter(j => {
+    if ((j.score ?? -1) < minScore && minScore > 0) return false;
+    if (statusFilter && j.application?.status !== statusFilter) return false;
+    if (q && !`${j.title} ${j.company} ${j.location}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  $("stat-total").textContent = JOBS.length;
+  $("stat-scored").textContent = JOBS.filter(j => (j.score ?? 0) > 0).length;
+  $("stat-tailored").textContent = JOBS.filter(j => j.application?.resume_version_id).length;
+  $("shown-count").textContent = `showing ${filtered.length} of ${JOBS.length}`;
+  $("empty").hidden = filtered.length > 0;
+
+  $("rows").innerHTML = filtered.map(j => {
+    const reasons = (j.score_reasons || []).map(r => `<li>${esc(r)}</li>`).join("");
+    const status = j.application?.status || "—";
+    const options = STATUSES.map(s =>
+      `<option value="${s}" ${s === status ? "selected" : ""}>${s.replaceAll("_"," ")}</option>`).join("");
+    return `<tr data-id="${j.id}">
+      <td>
+        <span class="score ${scoreClass(j.score)}">${j.score ?? "—"}</span>
+        ${reasons ? `<details class="reasons"><summary>why</summary><ul>${reasons}</ul></details>` : ""}
+      </td>
+      <td>
+        <a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a>
+        ${j.remote ? '<span class="remote-tag">remote</span>' : ""}
+        <div class="muted">${esc(j.company)} · ${esc(j.source)}</div>
+      </td>
+      <td>${esc(j.location) || '<span class="muted">—</span>'}</td>
+      <td>${j.application
+            ? `<select class="status" data-app="${j.application.id}">${options}</select>`
+            : '<span class="muted">—</span>'}</td>
+      <td class="row-actions">
+        <button data-act="tailor">Tailor</button>
+        <button data-act="diff" ${j.application?.resume_version_id ? "" : "disabled"}>Diff</button>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+async function loadJobs() {
+  JOBS = await (await api("/jobs")).json();
+  render();
+}
+
+$("rows").addEventListener("click", async e => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const id = btn.closest("tr").dataset.id;
+  if (btn.dataset.act === "tailor") {
+    btn.disabled = true; btn.textContent = "Tailoring…";
+    try {
+      await api(`/jobs/${id}/tailor`, {method: "POST"});
+      toast("Tailored resume saved.");
+      await loadJobs();
+      showDiff(id);
+    } catch (err) {
+      toast("Tailor failed: " + err.message, true);
+      btn.disabled = false; btn.textContent = "Tailor";
+    }
+  } else if (btn.dataset.act === "diff") {
+    showDiff(id);
+  }
+});
+
+async function showDiff(id) {
+  try {
+    const text = await (await api(`/jobs/${id}/diff`)).text();
+    const job = JOBS.find(j => j.id == id);
+    $("modal-title").textContent = `Diff — ${job ? job.title : "job " + id}`;
+    $("modal-diff").innerHTML = text.split("\n").map(line => {
+      const cls = line.startsWith("+") ? "add" : line.startsWith("-") ? "del"
+                : line.startsWith("@@") ? "hunk" : "";
+      return cls ? `<span class="${cls}">${esc(line)}</span>` : esc(line) + "\n";
+    }).join("");
+    $("modal").showModal();
+  } catch (err) {
+    toast(err.message, true);
+  }
+}
+
+$("rows").addEventListener("change", async e => {
+  const sel = e.target.closest("select.status");
+  if (!sel) return;
+  try {
+    await api(`/applications/${sel.dataset.app}/status`, {
+      method: "PATCH",
+      headers: {"content-type": "application/json"},
+      body: JSON.stringify({status: sel.value}),
+    });
+    toast("Status updated.");
+    await loadJobs();
+  } catch (err) {
+    toast(err.message, true);
+    await loadJobs(); // revert the select to server truth
+  }
+});
+
+$("btn-discover").addEventListener("click", async () => {
+  const b = $("btn-discover");
+  b.disabled = true; b.textContent = "Discovering…";
+  try {
+    const s = await (await api("/discover/run", {method: "POST"})).json();
+    toast(`Discovery: ${s.created} new, ${s.updated} updated` +
+          (s.errors.length ? `, ${s.errors.length} board error(s)` : ""));
+    if (s.errors.length) console.warn(s.errors);
+    await loadJobs();
+  } catch (err) {
+    toast("Discovery failed: " + err.message, true);
+  } finally {
+    b.disabled = false; b.textContent = "Run discovery";
+  }
+});
+
+$("btn-match").addEventListener("click", async () => {
+  const b = $("btn-match");
+  b.disabled = true; b.textContent = "Matching…";
+  try {
+    const s = await (await api("/match/run?rescore_all=true", {method: "POST"})).json();
+    toast(`Matched: ${s.scored} job(s) scored`);
+    await loadJobs();
+  } catch (err) {
+    toast("Match failed: " + err.message, true);
+  } finally {
+    b.disabled = false; b.textContent = "Re-match all";
+  }
+});
+
+for (const s of STATUSES) {
+  const o = document.createElement("option");
+  o.value = s; o.textContent = s.replaceAll("_", " ");
+  $("status-filter").appendChild(o);
+}
+$("min-score").addEventListener("input", render);
+$("search").addEventListener("input", render);
+$("status-filter").addEventListener("change", render);
+
+loadJobs().catch(err => toast("Failed to load jobs: " + err.message, true));
+</script>
+</body>
+</html>

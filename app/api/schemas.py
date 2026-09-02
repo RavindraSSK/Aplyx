@@ -6,6 +6,18 @@ from pydantic import BaseModel, ConfigDict
 from app.db.models import ApplicationStatus
 
 
+class ApplicationOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    job_id: int
+    status: ApplicationStatus
+    resume_version_id: int | None
+    notes: str
+    created_at: datetime
+    updated_at: datetime
+
+
 class JobOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -19,18 +31,7 @@ class JobOut(BaseModel):
     posted_at: datetime | None
     score: float | None
     score_reasons: list | None
-
-
-class ApplicationOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    job_id: int
-    status: ApplicationStatus
-    resume_version_id: int | None
-    notes: str
-    created_at: datetime
-    updated_at: datetime
+    application: ApplicationOut | None = None
 
 
 class StatusUpdate(BaseModel):
