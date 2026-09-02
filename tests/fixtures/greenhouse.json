@@ -1,0 +1,20 @@
+{
+  "jobs": [
+    {
+      "id": 4011001,
+      "title": "Software Engineer, Backend",
+      "updated_at": "2026-08-20T10:00:00-04:00",
+      "location": {"name": "San Francisco, CA"},
+      "absolute_url": "https://boards.greenhouse.io/acme/jobs/4011001",
+      "content": "&lt;p&gt;We build APIs in &lt;b&gt;Python&lt;/b&gt; and FastAPI on PostgreSQL.&lt;/p&gt;"
+    },
+    {
+      "id": 4011002,
+      "title": "Staff Security Engineer",
+      "updated_at": "2026-08-21T09:00:00-04:00",
+      "location": {"name": "Remote - US"},
+      "absolute_url": "https://boards.greenhouse.io/acme/jobs/4011002",
+      "content": "&lt;p&gt;Requires active TS/SCI clearance.&lt;/p&gt;"
+    }
+  ]
+}
