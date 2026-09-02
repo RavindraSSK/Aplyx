@@ -1,0 +1,76 @@
+"""API routers: discovery, jobs (match/tailor/diff), applications."""
+from fastapi import APIRouter, Depends, HTTPException, Response
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.api.schemas import (
+    ApplicationOut,
+    DiscoverSummary,
+    JobOut,
+    StatusUpdate,
+    TailoredOut,
+)
+from app.db.models import Application, Job, TailoredResume
+from app.db.session import get_db
+from app.discovery.service import run_discovery
+from app.matching.service import run_matching
+from app.tailoring.service import tailor_job
+from app.tracker.service import InvalidTransition, update_status
+
+router = APIRouter()
+
+
+@router.post("/discover/run", response_model=DiscoverSummary)
+def discover(db: Session = Depends(get_db)):
+    return run_discovery(db)
+
+
+@router.post("/match/run")
+def match(rescore_all: bool = False, db: Session = Depends(get_db)):
+    return run_matching(db, rescore_all=rescore_all)
+
+
+@router.get("/jobs", response_model=list[JobOut])
+def list_jobs(min_score: float | None = None, db: Session = Depends(get_db)):
+    query = select(Job).order_by(Job.score.desc().nulls_last(), Job.id)
+    if min_score is not None:
+        query = query.where(Job.score >= min_score)
+    return db.scalars(query).all()
+
+
+def _get_job_or_404(db: Session, job_id: int) -> Job:
+    job = db.get(Job, job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="job not found")
+    return job
+
+
+@router.post("/jobs/{job_id}/tailor", response_model=TailoredOut)
+def tailor(job_id: int, db: Session = Depends(get_db)):
+    job = _get_job_or_404(db, job_id)
+    return tailor_job(db, job)
+
+
+@router.get("/jobs/{job_id}/diff")
+def get_diff(job_id: int, db: Session = Depends(get_db)):
+    _get_job_or_404(db, job_id)
+    latest = db.scalar(
+        select(TailoredResume)
+        .where(TailoredResume.job_id == job_id)
+        .order_by(TailoredResume.created_at.desc(), TailoredResume.id.desc())
+        .limit(1)
+    )
+    if latest is None:
+        raise HTTPException(status_code=404, detail="no tailored resume for this job yet")
+    return Response(content=latest.diff, media_type="text/x-diff")
+
+
+@router.patch("/applications/{application_id}/status", response_model=ApplicationOut)
+def patch_status(application_id: int, body: StatusUpdate, db: Session = Depends(get_db)):
+    application = db.get(Application, application_id)
+    if application is None:
+        raise HTTPException(status_code=404, detail="application not found")
+    try:
+        return update_status(db, application, body.status, notes=body.notes)
+    except InvalidTransition as exc:
+        raise HTTPException(status_code=409, detail=str(exc))

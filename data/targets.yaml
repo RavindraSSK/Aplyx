@@ -1,0 +1,33 @@
+# Companies to watch. source: greenhouse | lever | ashby
+# slug = the board identifier in the company's careers URL, e.g.
+#   greenhouse: boards.greenhouse.io/<slug>
+#   lever:      jobs.lever.co/<slug>
+#   ashby:      jobs.ashbyhq.com/<slug>
+companies:
+  - name: Anthropic
+    source: greenhouse
+    slug: anthropic
+  - name: Plaid
+    source: lever
+    slug: plaid
+  - name: Ramp
+    source: ashby
+    slug: ramp
+
+# Rule filters applied during matching (all optional).
+matching:
+  # Title must contain at least one of these (case-insensitive):
+  required_title_keywords:
+    - engineer
+    - developer
+  # Any of these in the title or description disqualifies the job (score 0):
+  excluded_keywords:
+    - senior staff
+    - "10+ years"
+    - clearance
+  # Allowed locations (substring match). Remote jobs always pass:
+  locations:
+    - san francisco
+    - new york
+  # If true, the description must mention visa sponsorship:
+  must_mention_sponsorship: false

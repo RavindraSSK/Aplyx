@@ -1,0 +1,20 @@
+[
+  {
+    "id": "a1b2c3d4-0001",
+    "text": "Backend Developer",
+    "createdAt": 1755600000000,
+    "workplaceType": "remote",
+    "categories": {"location": "New York, NY", "team": "Engineering"},
+    "hostedUrl": "https://jobs.lever.co/globex/a1b2c3d4-0001",
+    "descriptionPlain": "Build Python services with SQLAlchemy and Docker."
+  },
+  {
+    "id": "a1b2c3d4-0002",
+    "text": "Account Executive",
+    "createdAt": 1755610000000,
+    "workplaceType": "onsite",
+    "categories": {"location": "Chicago, IL"},
+    "hostedUrl": "https://jobs.lever.co/globex/a1b2c3d4-0002",
+    "description": "<div>Sell things. 10+ years quota-carrying experience.</div>"
+  }
+]
