@@ -6,158 +6,340 @@
 <title>jobagent</title>
 <style>
   :root {
-    --bg: #f6f7f9; --card: #ffffff; --text: #1a1d21; --muted: #6b7280;
-    --border: #e5e7eb; --accent: #2563eb; --accent-soft: #dbeafe;
-    --good: #16a34a; --mid: #d97706; --bad: #9ca3af; --danger: #dc2626;
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --surface-2: #f3f2ef;
+    --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --hairline: #e1e0d9; --ring: rgba(11,11,11,.10);
+    --accent: #2a78d6; --accent-soft: rgba(42,120,214,.12);
+    --violet: #4a3aa7; --aqua: #1baf7a;
+    --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+    --good-text: #006300;
+    --shadow: 0 1px 2px rgba(11,11,11,.05), 0 4px 16px rgba(11,11,11,.05);
   }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --surface-2: #232322;
+      --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+      --hairline: #2c2c2a; --ring: rgba(255,255,255,.10);
+      --accent: #3987e5; --accent-soft: rgba(57,135,229,.16);
+      --violet: #9085e9; --aqua: #199e70;
+      --good-text: #0ca30c;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --surface-2: #232322;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --hairline: #2c2c2a; --ring: rgba(255,255,255,.10);
+    --accent: #3987e5; --accent-soft: rgba(57,135,229,.16);
+    --violet: #9085e9; --aqua: #199e70;
+    --good-text: #0ca30c;
+    --shadow: none;
+  }
+
   * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    margin: 0; background: var(--page); color: var(--ink);
+    font: 14px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  header {
-    background: var(--card); border-bottom: 1px solid var(--border);
-    padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  .shell { display: flex; min-height: 100vh; }
+
+  /* ── sidebar ── */
+  aside {
+    width: 216px; flex-shrink: 0; padding: 20px 14px;
+    border-right: 1px solid var(--hairline); background: var(--surface);
+    display: flex; flex-direction: column; gap: 4px;
+    position: sticky; top: 0; height: 100vh;
   }
-  header h1 { font-size: 18px; margin: 0 16px 0 0; }
-  header h1 span { color: var(--accent); }
-  .chip {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 999px;
-    padding: 3px 12px; font-size: 12.5px; color: var(--muted);
+  .brand {
+    display: flex; align-items: center; gap: 10px; padding: 4px 10px 18px;
+    font-size: 16px; font-weight: 700; letter-spacing: -.01em;
   }
-  .chip b { color: var(--text); }
+  .brand .mark {
+    width: 28px; height: 28px; border-radius: 8px; background: var(--accent);
+    color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 800;
+  }
+  .brand small { color: var(--muted); font-weight: 500; font-size: 11px; margin-left: auto; }
+  nav a {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border-radius: 8px; color: var(--ink-2); text-decoration: none; font-weight: 500;
+  }
+  nav a svg { width: 16px; height: 16px; flex-shrink: 0; }
+  nav a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  nav a.soon { opacity: .45; cursor: default; }
+  nav a.soon i {
+    margin-left: auto; font-style: normal; font-size: 10px; color: var(--muted);
+    border: 1px solid var(--hairline); border-radius: 999px; padding: 1px 7px;
+  }
+  .side-foot { margin-top: auto; padding: 10px; font-size: 12px; color: var(--muted); }
+  .side-foot a { color: var(--muted); }
+
+  /* ── main ── */
+  main { flex: 1; min-width: 0; padding: 24px 28px 56px; }
+  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .topbar h1 { font-size: 20px; letter-spacing: -.01em; margin: 0; }
+  .topbar .sub { color: var(--muted); font-size: 13px; }
   .spacer { flex: 1; }
+
   button {
-    font: inherit; border: 1px solid var(--border); background: var(--card);
-    border-radius: 8px; padding: 7px 14px; cursor: pointer; color: var(--text);
+    font: inherit; font-weight: 500; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 8px; padding: 8px 14px; cursor: pointer;
+    transition: border-color .12s, background .12s;
   }
   button:hover { border-color: var(--accent); color: var(--accent); }
-  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  button.primary:hover { opacity: .9; color: #fff; }
-  button:disabled { opacity: .5; cursor: wait; }
-  .controls {
-    padding: 14px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  button.primary {
+    background: var(--accent); border-color: var(--accent); color: #fff;
   }
-  .controls input, .controls select {
-    font: inherit; padding: 7px 10px; border: 1px solid var(--border);
-    border-radius: 8px; background: var(--card); color: var(--text);
+  button.primary:hover { filter: brightness(1.06); color: #fff; }
+  button:disabled { opacity: .5; cursor: progress; }
+  button.icon { padding: 8px 10px; line-height: 0; }
+  button.icon svg { width: 16px; height: 16px; }
+
+  /* ── stat tiles ── */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px;
+    padding: 14px 16px; box-shadow: var(--shadow);
   }
-  .controls input[type="number"] { width: 80px; }
-  .controls input[type="search"] { width: 240px; }
-  main { padding: 0 24px 40px; }
-  table {
-    width: 100%; border-collapse: collapse; background: var(--card);
-    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  .tile .label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .tile .value { font-size: 26px; font-weight: 700; letter-spacing: -.02em; margin-top: 2px; }
+  .tile .hint { font-size: 12px; color: var(--ink-2); }
+
+  /* ── pipeline chips ── */
+  .pipeline { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .chip {
+    display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 500;
+    color: var(--ink-2); background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 999px; padding: 5px 12px; cursor: pointer;
   }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .chip b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+
+  /* ── card + filters ── */
+  .card {
+    background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .filters {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding: 12px 16px; border-bottom: 1px solid var(--hairline);
+  }
+  .filters input {
+    font: inherit; color: var(--ink); background: var(--page);
+    border: 1px solid var(--hairline); border-radius: 8px; padding: 7px 11px;
+  }
+  .filters input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+  .filters input[type="search"] { width: 260px; }
+  .filters input[type="number"] { width: 72px; }
+  .filters label { color: var(--ink-2); font-size: 13px; display: flex; align-items: center; gap: 7px; }
+  .count { color: var(--muted); font-size: 12.5px; margin-left: auto; }
+
+  /* ── table ── */
+  table { width: 100%; border-collapse: collapse; }
   thead th {
-    text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
-    color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--border);
-    background: var(--card); position: sticky; top: 0;
+    text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 10px 16px; border-bottom: 1px solid var(--hairline);
   }
-  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid var(--hairline); vertical-align: middle; }
   tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover td { background: #fafbfc; }
+  tbody tr:hover td { background: var(--surface-2); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .score {
-    display: inline-block; min-width: 44px; text-align: center; font-weight: 600;
-    border-radius: 6px; padding: 2px 8px; color: #fff; background: var(--bad);
+  .job-title { font-weight: 600; color: var(--ink); }
+  .job-title:hover { color: var(--accent); }
+  .job-meta { color: var(--muted); font-size: 12.5px; margin-top: 1px; }
+
+  .scorecell { min-width: 120px; }
+  .scorenum { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .scorebar {
+    height: 4px; border-radius: 4px; background: var(--surface-2);
+    margin-top: 6px; overflow: hidden; max-width: 96px;
   }
-  .score.high { background: var(--good); }
-  .score.mid { background: var(--mid); }
-  .muted { color: var(--muted); font-size: 12.5px; }
+  .scorebar i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+  .why {
+    margin-top: 6px; font-size: 12px; color: var(--muted); cursor: pointer;
+    border: none; background: none; padding: 0;
+  }
+  .why:hover { color: var(--accent); border: none; }
+  .reasons { margin: 6px 0 0; padding-left: 16px; font-size: 12.5px; color: var(--ink-2); }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12.5px; font-weight: 500; color: var(--ink-2);
+    border: 1px solid var(--hairline); border-radius: 999px; padding: 4px 11px;
+    background: var(--surface); cursor: pointer;
+  }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+  select.status {
+    font: inherit; font-size: 12.5px; color: var(--ink-2);
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 999px; padding: 4px 8px; cursor: pointer;
+  }
   .remote-tag {
-    font-size: 11px; background: var(--accent-soft); color: var(--accent);
-    border-radius: 4px; padding: 1px 6px; margin-left: 6px;
+    font-size: 11px; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; margin-left: 7px;
   }
-  select.status { font: inherit; padding: 5px 6px; border-radius: 6px; border: 1px solid var(--border); }
-  .row-actions { display: flex; gap: 6px; }
-  .row-actions button { padding: 5px 10px; font-size: 12.5px; }
-  details.reasons { margin-top: 4px; }
-  details.reasons summary { cursor: pointer; font-size: 12px; color: var(--muted); }
-  details.reasons ul { margin: 4px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); }
-  /* modal */
+  .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+  .row-actions button { padding: 6px 11px; font-size: 12.5px; border-radius: 7px; }
+
+  .empty { padding: 56px 20px; text-align: center; color: var(--muted); }
+  .empty b { color: var(--ink); display: block; font-size: 15px; margin-bottom: 4px; }
+
+  /* ── modal ── */
   dialog {
-    border: 1px solid var(--border); border-radius: 12px; padding: 0;
-    width: min(900px, 92vw); max-height: 85vh;
+    border: 1px solid var(--hairline); border-radius: 14px; padding: 0;
+    width: min(920px, 92vw); max-height: 85vh;
+    background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
   }
-  dialog::backdrop { background: rgba(0,0,0,.35); }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
   .modal-head {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 18px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 14px 20px; border-bottom: 1px solid var(--hairline);
   }
   .modal-head h2 { font-size: 15px; margin: 0; }
-  .modal-body { overflow: auto; max-height: 70vh; padding: 12px 18px; }
-  pre.diff {
-    margin: 0; font: 12.5px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap;
-  }
-  pre.diff .add { background: #dcfce7; color: #14532d; display: block; }
-  pre.diff .del { background: #fee2e2; color: #7f1d1d; display: block; }
-  pre.diff .hunk { color: var(--accent); display: block; }
+  .modal-body { overflow: auto; max-height: 70vh; padding: 14px 20px 20px; }
+  pre.diff { margin: 0; font: 12.5px/1.6 ui-monospace, Consolas, monospace; white-space: pre-wrap; }
+  pre.diff .add { background: rgba(12,163,12,.12); color: var(--good-text); display: block; border-radius: 3px; padding: 0 6px; }
+  pre.diff .del { background: rgba(208,59,59,.12); color: var(--critical); display: block; border-radius: 3px; padding: 0 6px; }
+  pre.diff .hunk { color: var(--accent); display: block; padding: 6px 6px 0; }
+
   #toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--text); color: #fff; padding: 10px 18px; border-radius: 8px;
-    opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 80vw;
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--page); padding: 10px 18px; border-radius: 10px;
+    font-weight: 500; opacity: 0; transition: opacity .25s; pointer-events: none;
+    max-width: 82vw; box-shadow: var(--shadow);
   }
   #toast.show { opacity: 1; }
-  #toast.error { background: var(--danger); }
-  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  #toast.error { background: var(--critical); color: #fff; }
+
+  @media (max-width: 860px) {
+    aside { display: none; }
+    main { padding: 16px 14px 48px; }
+    .filters input[type="search"] { width: 100%; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>job<span>agent</span></h1>
-  <span class="chip">jobs <b id="stat-total">–</b></span>
-  <span class="chip">score &gt; 0 <b id="stat-scored">–</b></span>
-  <span class="chip">tailored <b id="stat-tailored">–</b></span>
-  <span class="spacer"></span>
-  <button id="btn-discover">Run discovery</button>
-  <button id="btn-match">Re-match all</button>
-</header>
+<div class="shell">
 
-<div class="controls">
-  <label>Min score <input type="number" id="min-score" value="0" min="0" max="100"></label>
-  <input type="search" id="search" placeholder="Filter by title / company / location…">
-  <select id="status-filter">
-    <option value="">All statuses</option>
-  </select>
-  <span class="muted" id="shown-count"></span>
+  <aside>
+    <div class="brand"><span class="mark">j</span> jobagent <small>v0.1</small></div>
+    <nav>
+      <a class="active" href="/">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.2"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1.2"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1.2"/><rect x="9" y="9" width="5.5" height="5.5" rx="1.2"/></svg>
+        Overview
+      </a>
+      <a class="soon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 5.5h12M2 5.5V13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5.5M5.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5"/></svg>
+        Auto-apply <i>soon</i>
+      </a>
+      <a class="soon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.8V8l2.2 2.2"/></svg>
+        Activity <i>soon</i>
+      </a>
+      <a class="soon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="2.2"/><path d="M13.3 9.8a1.2 1.2 0 0 0 .24 1.32l.04.05a1.45 1.45 0 1 1-2.05 2.05l-.05-.04a1.2 1.2 0 0 0-1.32-.24 1.2 1.2 0 0 0-.73 1.1v.13a1.45 1.45 0 1 1-2.9 0v-.07a1.2 1.2 0 0 0-.79-1.1 1.2 1.2 0 0 0-1.32.24l-.04.05A1.45 1.45 0 1 1 2.23 11.2l.05-.04a1.2 1.2 0 0 0 .24-1.32 1.2 1.2 0 0 0-1.1-.73H1.3a1.45 1.45 0 1 1 0-2.9h.07a1.2 1.2 0 0 0 1.1-.79 1.2 1.2 0 0 0-.24-1.32l-.05-.04A1.45 1.45 0 1 1 4.23 2.01l.04.05a1.2 1.2 0 0 0 1.32.24h.06a1.2 1.2 0 0 0 .73-1.1V1.07a1.45 1.45 0 1 1 2.9 0v.13a1.2 1.2 0 0 0 .73 1.1 1.2 1.2 0 0 0 1.32-.24l.04-.05a1.45 1.45 0 1 1 2.05 2.05l-.05.04a1.2 1.2 0 0 0-.24 1.32v.06a1.2 1.2 0 0 0 1.1.73h.13a1.45 1.45 0 1 1 0 2.9h-.07a1.2 1.2 0 0 0-1.1.73Z"/></svg>
+        Settings <i>soon</i>
+      </a>
+    </nav>
+    <div class="side-foot">Human-in-the-loop:<br>nothing is ever auto-submitted.</div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Overview</h1>
+        <div class="sub">Discover &rarr; match &rarr; tailor &rarr; track</div>
+      </div>
+      <span class="spacer"></span>
+      <button class="icon" id="btn-theme" title="Toggle theme" aria-label="Toggle theme">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 9.5A5.7 5.7 0 0 1 6.5 2.5a5.7 5.7 0 1 0 7 7Z"/></svg>
+      </button>
+      <button id="btn-match">Re-match all</button>
+      <button class="primary" id="btn-discover">Run discovery</button>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><div class="label">Jobs tracked</div><div class="value" id="t-total">–</div><div class="hint" id="t-total-hint">&nbsp;</div></div>
+      <div class="tile"><div class="label">Strong matches</div><div class="value" id="t-strong">–</div><div class="hint">score &ge; 50</div></div>
+      <div class="tile"><div class="label">Avg match score</div><div class="value" id="t-avg">–</div><div class="hint">across scored jobs</div></div>
+      <div class="tile"><div class="label">Tailored resumes</div><div class="value" id="t-tailored">–</div><div class="hint">ready for review</div></div>
+    </div>
+
+    <div class="pipeline" id="pipeline"></div>
+
+    <div class="card">
+      <div class="filters">
+        <label>Min score <input type="number" id="min-score" value="0" min="0" max="100"></label>
+        <input type="search" id="search" placeholder="Search title, company, location&hellip;">
+        <span class="count" id="shown-count"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Match</th><th>Role</th><th>Location</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="empty" hidden>
+        <b>No jobs here yet</b>
+        Run discovery, clear the filters, or lower the minimum score.
+      </div>
+    </div>
+  </main>
 </div>
-
-<main>
-  <table>
-    <thead>
-      <tr>
-        <th>Score</th><th>Job</th><th>Location</th><th>Status</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-  <div class="empty" id="empty" hidden>No jobs match. Run discovery, or lower the score filter.</div>
-</main>
 
 <dialog id="modal">
   <div class="modal-head">
-    <h2 id="modal-title">Diff</h2>
+    <h2 id="modal-title">Resume diff</h2>
     <button onclick="document.getElementById('modal').close()">Close</button>
   </div>
   <div class="modal-body"><pre class="diff" id="modal-diff"></pre></div>
 </dialog>
 
-<div id="toast"></div>
+<div id="toast" role="status"></div>
 
 <script>
 const STATUSES = ["discovered","matched","tailored","ready_to_apply","applied","interview","rejected"];
+const STATUS_COLOR = {
+  discovered: "var(--muted)", matched: "var(--accent)", tailored: "var(--violet)",
+  ready_to_apply: "var(--warning)", applied: "var(--aqua)",
+  interview: "var(--good)", rejected: "var(--critical)",
+};
 let JOBS = [];
+let statusFilter = "";
 
 const $ = id => document.getElementById(id);
+const esc = s => (s ?? "").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const label = s => s.replaceAll("_", " ");
+
+/* theme */
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem("theme"); } catch {}
+  if (saved) document.documentElement.dataset.theme = saved;
+})();
+$("btn-theme").addEventListener("click", () => {
+  const cur = document.documentElement.dataset.theme ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch {}
+});
 
 function toast(msg, isError=false) {
   const t = $("toast");
   t.textContent = msg;
   t.className = "show" + (isError ? " error" : "");
   clearTimeout(t._h);
-  t._h = setTimeout(() => t.className = "", 3500);
+  t._h = setTimeout(() => t.className = "", 3800);
 }
 
 async function api(path, opts={}) {
@@ -170,74 +352,103 @@ async function api(path, opts={}) {
   return resp;
 }
 
-function scoreClass(s) {
-  if (s === null || s === undefined) return "";
-  return s >= 50 ? "high" : s > 20 ? "mid" : "";
+function renderStats() {
+  const scored = JOBS.filter(j => (j.score ?? 0) > 0);
+  $("t-total").textContent = JOBS.length;
+  const companies = new Set(JOBS.map(j => j.company)).size;
+  $("t-total-hint").textContent = companies ? `across ${companies} compan${companies === 1 ? "y" : "ies"}` : " ";
+  $("t-strong").textContent = JOBS.filter(j => (j.score ?? 0) >= 50).length;
+  $("t-avg").textContent = scored.length
+    ? Math.round(scored.reduce((a, j) => a + j.score, 0) / scored.length) : "–";
+  $("t-tailored").textContent = JOBS.filter(j => j.application?.resume_version_id).length;
+
+  const counts = {};
+  for (const j of JOBS) {
+    const s = j.application?.status;
+    if (s) counts[s] = (counts[s] || 0) + 1;
+  }
+  $("pipeline").innerHTML = STATUSES.map(s => `
+    <button class="chip ${statusFilter === s ? "on" : ""}" data-status="${s}">
+      <span class="dot" style="background:${STATUS_COLOR[s]}"></span>
+      ${label(s)} <b>${counts[s] || 0}</b>
+    </button>`).join("");
 }
 
-function esc(s) {
-  return (s ?? "").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-}
-
-function render() {
+function renderRows() {
   const minScore = parseFloat($("min-score").value) || 0;
   const q = $("search").value.toLowerCase();
-  const statusFilter = $("status-filter").value;
 
   const filtered = JOBS.filter(j => {
-    if ((j.score ?? -1) < minScore && minScore > 0) return false;
+    if (minScore > 0 && (j.score ?? -1) < minScore) return false;
     if (statusFilter && j.application?.status !== statusFilter) return false;
     if (q && !`${j.title} ${j.company} ${j.location}`.toLowerCase().includes(q)) return false;
     return true;
   });
 
-  $("stat-total").textContent = JOBS.length;
-  $("stat-scored").textContent = JOBS.filter(j => (j.score ?? 0) > 0).length;
-  $("stat-tailored").textContent = JOBS.filter(j => j.application?.resume_version_id).length;
-  $("shown-count").textContent = `showing ${filtered.length} of ${JOBS.length}`;
+  $("shown-count").textContent = `${filtered.length} of ${JOBS.length} jobs`;
   $("empty").hidden = filtered.length > 0;
 
   $("rows").innerHTML = filtered.map(j => {
+    const score = j.score;
     const reasons = (j.score_reasons || []).map(r => `<li>${esc(r)}</li>`).join("");
-    const status = j.application?.status || "—";
+    const status = j.application?.status;
     const options = STATUSES.map(s =>
-      `<option value="${s}" ${s === status ? "selected" : ""}>${s.replaceAll("_"," ")}</option>`).join("");
+      `<option value="${s}" ${s === status ? "selected" : ""}>${label(s)}</option>`).join("");
     return `<tr data-id="${j.id}">
-      <td>
-        <span class="score ${scoreClass(j.score)}">${j.score ?? "—"}</span>
-        ${reasons ? `<details class="reasons"><summary>why</summary><ul>${reasons}</ul></details>` : ""}
+      <td class="scorecell">
+        <span class="scorenum">${score ?? "–"}</span><span style="color:var(--muted);font-size:12px"> / 100</span>
+        <div class="scorebar"><i style="width:${Math.max(0, Math.min(100, score ?? 0))}%"></i></div>
+        ${reasons ? `<button class="why" data-act="why">why?</button><ul class="reasons" hidden>${reasons}</ul>` : ""}
       </td>
       <td>
-        <a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a>
-        ${j.remote ? '<span class="remote-tag">remote</span>' : ""}
-        <div class="muted">${esc(j.company)} · ${esc(j.source)}</div>
+        <a class="job-title" href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a>
+        ${j.remote ? '<span class="remote-tag">Remote</span>' : ""}
+        <div class="job-meta">${esc(j.company)} &middot; ${esc(j.source)}</div>
       </td>
-      <td>${esc(j.location) || '<span class="muted">—</span>'}</td>
-      <td>${j.application
-            ? `<select class="status" data-app="${j.application.id}">${options}</select>`
-            : '<span class="muted">—</span>'}</td>
-      <td class="row-actions">
-        <button data-act="tailor">Tailor</button>
-        <button data-act="diff" ${j.application?.resume_version_id ? "" : "disabled"}>Diff</button>
+      <td style="color:var(--ink-2)">${esc(j.location) || "—"}</td>
+      <td>${status ? `
+        <span class="pill" style="padding:0;border:none;background:none;cursor:default">
+          <span class="dot" style="background:${STATUS_COLOR[status]}"></span>
+          <select class="status" data-app="${j.application.id}">${options}</select>
+        </span>` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>
+        <div class="row-actions">
+          <button data-act="tailor">Tailor</button>
+          <button data-act="diff" ${j.application?.resume_version_id ? "" : "disabled"}>Diff</button>
+        </div>
       </td>
     </tr>`;
   }).join("");
 }
+
+function render() { renderStats(); renderRows(); }
 
 async function loadJobs() {
   JOBS = await (await api("/jobs")).json();
   render();
 }
 
+$("pipeline").addEventListener("click", e => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  statusFilter = statusFilter === chip.dataset.status ? "" : chip.dataset.status;
+  render();
+});
+
 $("rows").addEventListener("click", async e => {
   const btn = e.target.closest("button[data-act]");
   if (!btn) return;
+  if (btn.dataset.act === "why") {
+    const ul = btn.nextElementSibling;
+    ul.hidden = !ul.hidden;
+    return;
+  }
   const id = btn.closest("tr").dataset.id;
   if (btn.dataset.act === "tailor") {
     btn.disabled = true; btn.textContent = "Tailoring…";
     try {
       await api(`/jobs/${id}/tailor`, {method: "POST"});
-      toast("Tailored resume saved.");
+      toast("Tailored resume saved — review the diff.");
       await loadJobs();
       showDiff(id);
     } catch (err) {
@@ -253,7 +464,7 @@ async function showDiff(id) {
   try {
     const text = await (await api(`/jobs/${id}/diff`)).text();
     const job = JOBS.find(j => j.id == id);
-    $("modal-title").textContent = `Diff — ${job ? job.title : "job " + id}`;
+    $("modal-title").textContent = job ? `Resume diff — ${job.title}` : "Resume diff";
     $("modal-diff").innerHTML = text.split("\n").map(line => {
       const cls = line.startsWith("+") ? "add" : line.startsWith("-") ? "del"
                 : line.startsWith("@@") ? "hunk" : "";
@@ -275,11 +486,10 @@ $("rows").addEventListener("change", async e => {
       body: JSON.stringify({status: sel.value}),
     });
     toast("Status updated.");
-    await loadJobs();
   } catch (err) {
     toast(err.message, true);
-    await loadJobs(); // revert the select to server truth
   }
+  await loadJobs();
 });
 
 $("btn-discover").addEventListener("click", async () => {
@@ -303,7 +513,7 @@ $("btn-match").addEventListener("click", async () => {
   b.disabled = true; b.textContent = "Matching…";
   try {
     const s = await (await api("/match/run?rescore_all=true", {method: "POST"})).json();
-    toast(`Matched: ${s.scored} job(s) scored`);
+    toast(`Scored ${s.scored} job(s).`);
     await loadJobs();
   } catch (err) {
     toast("Match failed: " + err.message, true);
@@ -312,14 +522,8 @@ $("btn-match").addEventListener("click", async () => {
   }
 });
 
-for (const s of STATUSES) {
-  const o = document.createElement("option");
-  o.value = s; o.textContent = s.replaceAll("_", " ");
-  $("status-filter").appendChild(o);
-}
-$("min-score").addEventListener("input", render);
-$("search").addEventListener("input", render);
-$("status-filter").addEventListener("change", render);
+$("min-score").addEventListener("input", renderRows);
+$("search").addEventListener("input", renderRows);
 
 loadJobs().catch(err => toast("Failed to load jobs: " + err.message, true));
 </script>
