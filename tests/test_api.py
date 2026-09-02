@@ -19,6 +19,33 @@ def test_health(client):
     assert client.get("/health").json() == {"status": "ok"}
 
 
+def test_basic_auth_when_password_set(client, monkeypatch):
+    from app.config import get_settings
+
+    settings = get_settings().model_copy(update={"dashboard_password": "hunter2"})
+    monkeypatch.setattr("app.main.get_settings", lambda: settings)
+
+    assert client.get("/jobs").status_code == 401
+    ok = client.get("/jobs", auth=("me", "hunter2"))
+    assert ok.status_code == 200
+    bad = client.get("/jobs", auth=("me", "wrong"))
+    assert bad.status_code == 401
+
+
+def test_dashboard_served_at_root(client):
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers["content-type"]
+    assert "jobagent" in resp.text
+
+
+def test_jobs_include_application(client, db):
+    _seed(db, "withapp", score=42.0)
+    [job] = client.get("/jobs").json()
+    assert job["application"]["status"] == "discovered"
+    assert job["application"]["resume_version_id"] is None
+
+
 def test_discover_run_endpoint(client, monkeypatch):
     monkeypatch.setattr(
         "app.api.routes.run_discovery",

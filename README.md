@@ -52,13 +52,26 @@ Pipeline per job: `discovered → matched → tailored → ready_to_apply → ap
 
 ## Setup
 
+macOS / Linux:
+
 ```bash
 make setup            # venv + deps, copies .env.example -> .env
-# then:
-#   1. put your ANTHROPIC_API_KEY in .env
-#   2. paste your real resume into data/resume.md
-#   3. edit data/targets.yaml with companies you care about
 ```
+
+Windows (Git Bash — no `make` needed):
+
+```bash
+python -m venv .venv
+source .venv/Scripts/activate
+pip install -e ".[dev]"
+cp .env.example .env
+```
+
+Then in both cases:
+
+1. put your `ANTHROPIC_API_KEY` in `.env`
+2. paste your real resume into `data/resume.md`
+3. edit `data/targets.yaml` with companies you care about
 
 Optional extras:
 
@@ -115,6 +128,25 @@ All external calls (ATS APIs, Claude) are mocked; tests run against in-memory SQ
 | `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | needs the `[ml]` extra |
 
 Secrets live only in `.env` (gitignored). Never commit it.
+
+## Deploying to Vercel
+
+The repo includes `vercel.json` + `api/index.py`, so Vercel builds it as a
+Python serverless app automatically once the project is linked to this GitHub
+repo. Three environment variables are required in the Vercel project settings:
+
+| Var | Value |
+|---|---|
+| `DATABASE_URL` | a hosted Postgres URL (e.g. free [Neon](https://neon.tech): `postgresql+psycopg2://user:pass@host/db?sslmode=require`) |
+| `DASHBOARD_PASSWORD` | any password — **without it your data and API key are public** |
+| `ANTHROPIC_API_KEY` | for the Tailor button |
+
+Serverless caveats: without `DATABASE_URL` the app falls back to SQLite in
+`/tmp`, which is wiped between invocations — fine for a smoke test, useless for
+real data. The `[ml]` embeddings extra doesn't fit in a serverless bundle, so
+matching uses the TF-IDF fallback there; run `python -m app.cli match --all`
+locally (pointing `DATABASE_URL` at the same Postgres) for embedding-quality
+scores. GitHub Pages is static-only and cannot host this app.
 
 ## Phase 2 roadmap
 

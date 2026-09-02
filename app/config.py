@@ -1,6 +1,8 @@
 """Application settings loaded from environment / .env via pydantic-settings."""
+import os
 from functools import lru_cache
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,6 +11,17 @@ class Settings(BaseSettings):
 
     anthropic_api_key: str = ""
     database_url: str = "sqlite:///./jobagent.db"
+    # When set, every route requires HTTP Basic auth with this password.
+    # REQUIRED for any public deployment (Vercel etc.).
+    dashboard_password: str = ""
+
+    @model_validator(mode="after")
+    def _serverless_sqlite_fallback(self):
+        # Vercel's filesystem is read-only except /tmp; without a real
+        # DATABASE_URL the default relative SQLite path would crash on boot.
+        if os.environ.get("VERCEL") and self.database_url == "sqlite:///./jobagent.db":
+            self.database_url = "sqlite:////tmp/jobagent.db"
+        return self
     claude_model: str = "claude-sonnet-4-6"
     resume_path: str = "data/resume.md"
     targets_path: str = "data/targets.yaml"
