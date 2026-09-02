@@ -5,7 +5,7 @@ from app.tracker.service import InvalidTransition, update_status
 
 
 @pytest.fixture
-def application(db):
+def application(db, user):
     job = Job(
         external_id="1", source="lever", company="Globex",
         title="Dev", location="NY", remote=False,
@@ -13,7 +13,7 @@ def application(db):
     )
     db.add(job)
     db.flush()
-    app_row = Application(job_id=job.id, status=ApplicationStatus.discovered)
+    app_row = Application(job_id=job.id, user_id=user.id, status=ApplicationStatus.discovered)
     db.add(app_row)
     db.commit()
     return app_row

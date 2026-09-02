@@ -14,6 +14,23 @@ class Settings(BaseSettings):
     # When set, every route requires HTTP Basic auth with this password.
     # REQUIRED for any public deployment (Vercel etc.).
     dashboard_password: str = ""
+    # Single-tenant owner identity used by the Basic-auth provider.
+    owner_email: str = "owner@local"
+
+    claude_model: str = "claude-sonnet-4-6"
+    resume_path: str = "data/resume.md"
+    targets_path: str = "data/targets.yaml"
+    http_timeout_seconds: float = 30.0
+
+    # Vertical (domain) configuration - data only, see config/vertical/<name>/
+    vertical: str = "ai"
+    vertical_config_dir: str = "config/vertical"
+
+    # Embeddings: auto | voyage | local | hashing  (see app/embeddings/provider.py)
+    embedding_provider: str = "auto"
+    voyage_api_key: str = ""
+    voyage_model: str = "voyage-3-lite"
+    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"  # local provider
 
     @model_validator(mode="after")
     def _serverless_sqlite_fallback(self):
@@ -22,11 +39,6 @@ class Settings(BaseSettings):
         if os.environ.get("VERCEL") and self.database_url == "sqlite:///./jobagent.db":
             self.database_url = "sqlite:////tmp/jobagent.db"
         return self
-    claude_model: str = "claude-sonnet-4-6"
-    resume_path: str = "data/resume.md"
-    targets_path: str = "data/targets.yaml"
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
-    http_timeout_seconds: float = 30.0
 
 
 @lru_cache

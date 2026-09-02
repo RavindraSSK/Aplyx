@@ -10,7 +10,8 @@ from app.api.schemas import (
     StatusUpdate,
     TailoredOut,
 )
-from app.db.models import Application, Job, TailoredResume
+from app.auth import current_user
+from app.db.models import Application, Job, TailoredResume, User
 from app.db.session import get_db
 from app.discovery.service import run_discovery
 from app.matching.service import run_matching
@@ -21,8 +22,8 @@ router = APIRouter()
 
 
 @router.post("/discover/run", response_model=DiscoverSummary)
-def discover(db: Session = Depends(get_db)):
-    return run_discovery(db)
+def discover(db: Session = Depends(get_db), user: User = Depends(current_user)):
+    return run_discovery(db, user_id=user.id)
 
 
 @router.post("/match/run")
@@ -46,9 +47,9 @@ def _get_job_or_404(db: Session, job_id: int) -> Job:
 
 
 @router.post("/jobs/{job_id}/tailor", response_model=TailoredOut)
-def tailor(job_id: int, db: Session = Depends(get_db)):
+def tailor(job_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
     job = _get_job_or_404(db, job_id)
-    return tailor_job(db, job)
+    return tailor_job(db, job, user_id=user.id)
 
 
 @router.get("/jobs/{job_id}/diff")

@@ -46,7 +46,7 @@ def test_tailor_resume_calls_claude_with_strict_prompt():
     assert ORIGINAL.strip() in call["messages"][0]["content"]
 
 
-def test_tailor_job_persists_and_advances_status(db):
+def test_tailor_job_persists_and_advances_status(db, user):
     job = Job(
         external_id="1", source="greenhouse", company="Acme",
         title="Backend Engineer", location="NY", remote=False,
@@ -54,10 +54,11 @@ def test_tailor_job_persists_and_advances_status(db):
     )
     db.add(job)
     db.flush()
-    db.add(Application(job_id=job.id, status=ApplicationStatus.matched))
+    db.add(Application(job_id=job.id, user_id=user.id, status=ApplicationStatus.matched))
     db.commit()
 
-    record = tailor_job(db, job, resume_text=ORIGINAL, client=FakeClient())
+    record = tailor_job(db, job, resume_text=ORIGINAL, client=FakeClient(), user_id=user.id)
+    assert record.user_id == user.id
     assert record.id is not None
     assert record.content_md.strip() == TAILORED.strip()
     assert record.diff

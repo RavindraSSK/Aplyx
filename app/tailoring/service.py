@@ -12,11 +12,14 @@ def tailor_job(
     job: Job,
     resume_text: str | None = None,
     client: anthropic.Anthropic | None = None,
+    *,
+    user_id: int,
 ) -> TailoredResume:
     resume_text = resume_text if resume_text is not None else load_resume()
     result = tailor_resume(resume_text, job.title, job.description, client=client)
 
     record = TailoredResume(
+        user_id=user_id,
         job_id=job.id,
         content_md=result.content_md,
         diff=result.diff,

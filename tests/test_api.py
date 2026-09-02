@@ -1,4 +1,6 @@
-from app.db.models import Application, ApplicationStatus, Job, TailoredResume
+from sqlalchemy import select
+
+from app.db.models import Application, ApplicationStatus, Job, TailoredResume, User
 
 
 def _seed(db, url_suffix, score=None, title="Engineer"):
@@ -9,7 +11,7 @@ def _seed(db, url_suffix, score=None, title="Engineer"):
     )
     db.add(job)
     db.flush()
-    app_row = Application(job_id=job.id, status=ApplicationStatus.discovered)
+    app_row = Application(job_id=job.id, user_id=db.scalar(select(User.id)), status=ApplicationStatus.discovered)
     db.add(app_row)
     db.commit()
     return job, app_row
@@ -20,16 +22,28 @@ def test_health(client):
 
 
 def test_basic_auth_when_password_set(client, monkeypatch):
+    import base64
+
+    from app.auth import BasicAuthProvider
     from app.config import get_settings
 
     settings = get_settings().model_copy(update={"dashboard_password": "hunter2"})
-    monkeypatch.setattr("app.main.get_settings", lambda: settings)
+    monkeypatch.setattr("app.auth.get_settings", lambda: settings)
+    provider = BasicAuthProvider()
+    provider._owner_id = db_owner_id(client)
+    monkeypatch.setattr("app.main.get_auth_provider", lambda: provider)
 
     assert client.get("/jobs").status_code == 401
-    ok = client.get("/jobs", auth=("me", "hunter2"))
-    assert ok.status_code == 200
-    bad = client.get("/jobs", auth=("me", "wrong"))
-    assert bad.status_code == 401
+    assert client.get("/jobs", auth=("me", "hunter2")).status_code == 200
+    assert client.get("/jobs", auth=("me", "wrong")).status_code == 401
+
+
+def db_owner_id(client):
+    from app.db.session import get_db
+    from app.main import app
+
+    db = next(iter([app.dependency_overrides[get_db]()]))
+    return db.scalar(select(User.id))
 
 
 def test_dashboard_served_at_root(client):
@@ -49,7 +63,7 @@ def test_jobs_include_application(client, db):
 def test_discover_run_endpoint(client, monkeypatch):
     monkeypatch.setattr(
         "app.api.routes.run_discovery",
-        lambda db: {"created": 3, "updated": 1, "errors": []},
+        lambda db, user_id: {"created": 3, "updated": 1, "errors": []},
     )
     resp = client.post("/discover/run")
     assert resp.status_code == 200

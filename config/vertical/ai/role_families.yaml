@@ -1,0 +1,302 @@
+# Vertical config: AI-related role families for a US-based M.S./Ph.D. candidate
+# in AI / CS. Every band is IN SCOPE; bands exist so the user can widen or
+# narrow with a filter. The engine (app/) never hardcodes any of these names.
+#
+# Each family: title_synonyms (matched against posting titles), signals
+# (distinguishing characteristics used by the classifier), typical_background,
+# qualifying_degree_fields (degree fields that plausibly qualify).
+
+vertical: ai
+version: 1
+
+bands:
+  core_ai_ml:
+    label: Core AI/ML
+    description: The job is building AI/ML systems.
+    default_ai_relevance: core
+  ai_adjacent_engineering:
+    label: AI-adjacent engineering
+    description: Engineering serving AI/ML systems or products.
+    default_ai_relevance: applied
+  data_and_analytics:
+    label: Data and analytics
+    description: Data science, analytics and quantitative roles.
+    default_ai_relevance: applied
+  technical_non_coding:
+    label: Technical AI roles (non-core coding)
+    description: Technical roles in the AI industry that are not primarily coding.
+    default_ai_relevance: applied
+
+degree_fields: &cs_ai_degrees
+  - artificial intelligence
+  - computer science
+  - machine learning
+  - data science
+  - computer engineering
+  - electrical engineering
+  - statistics
+  - applied mathematics
+  - robotics
+  - computational linguistics
+
+families:
+  # ── Core AI/ML ───────────────────────────────────────────────────────────
+  ml_engineer:
+    band: core_ai_ml
+    label: Machine Learning Engineer
+    title_synonyms: [machine learning engineer, ml engineer, mle, ai engineer, machine learning software engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: M.S. in AI/CS with ML projects; Python, PyTorch/TensorFlow, model serving.
+    qualifying_degree_fields: *cs_ai_degrees
+  applied_scientist:
+    band: core_ai_ml
+    label: Applied Scientist
+    title_synonyms: [applied scientist, applied ml scientist, applied research scientist, machine learning scientist]
+    signals: {publications_expected: sometimes, production_systems: true, infra_depth: low, customer_facing: false}
+    typical_background: M.S./Ph.D.; experiment design, modeling, shipping models to product.
+    qualifying_degree_fields: *cs_ai_degrees
+  research_scientist:
+    band: core_ai_ml
+    label: Research Scientist
+    title_synonyms: [research scientist, ai research scientist, ml research scientist, member of technical staff research]
+    signals: {publications_expected: true, production_systems: false, infra_depth: low, customer_facing: false}
+    typical_background: Ph.D. typical; publications at top venues.
+    qualifying_degree_fields: *cs_ai_degrees
+  research_engineer:
+    band: core_ai_ml
+    label: Research Engineer
+    title_synonyms: [research engineer, ai research engineer, ml research engineer, member of technical staff]
+    signals: {publications_expected: sometimes, production_systems: true, infra_depth: high, customer_facing: false}
+    typical_background: Strong engineering plus research literacy; large-scale training and eval infra.
+    qualifying_degree_fields: *cs_ai_degrees
+  nlp_llm_engineer:
+    band: core_ai_ml
+    label: NLP / LLM Engineer
+    title_synonyms: [nlp engineer, llm engineer, large language model engineer, language model engineer, conversational ai engineer, nlp scientist]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: Transformers, fine-tuning, RAG, evaluation.
+    qualifying_degree_fields: *cs_ai_degrees
+  computer_vision_engineer:
+    band: core_ai_ml
+    label: Computer Vision Engineer
+    title_synonyms: [computer vision engineer, cv engineer, vision engineer, perception engineer, imaging scientist]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: CNNs/ViTs, detection/segmentation, image pipelines.
+    qualifying_degree_fields: *cs_ai_degrees
+  deep_learning_engineer:
+    band: core_ai_ml
+    label: Deep Learning Engineer
+    title_synonyms: [deep learning engineer, dl engineer, neural network engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: Model architecture, training loops, GPU optimization.
+    qualifying_degree_fields: *cs_ai_degrees
+  genai_engineer:
+    band: core_ai_ml
+    label: Generative AI Engineer
+    title_synonyms: [generative ai engineer, genai engineer, gen ai engineer, ai application engineer, agent engineer, ai agents engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: sometimes}
+    typical_background: LLM APIs, agents, prompt/eval pipelines, product integration.
+    qualifying_degree_fields: *cs_ai_degrees
+  rl_engineer:
+    band: core_ai_ml
+    label: Reinforcement Learning Engineer
+    title_synonyms: [reinforcement learning engineer, rl engineer, rl scientist, reinforcement learning scientist]
+    signals: {publications_expected: sometimes, production_systems: sometimes, infra_depth: medium, customer_facing: false}
+    typical_background: RL algorithms, simulation, RLHF.
+    qualifying_degree_fields: *cs_ai_degrees
+  speech_audio_ml:
+    band: core_ai_ml
+    label: Speech / Audio ML
+    title_synonyms: [speech engineer, speech scientist, audio ml engineer, asr engineer, speech recognition engineer, tts engineer]
+    signals: {publications_expected: sometimes, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: ASR/TTS, signal processing, sequence models.
+    qualifying_degree_fields: *cs_ai_degrees
+
+  # ── AI-adjacent engineering ─────────────────────────────────────────────
+  software_engineer_ai_product:
+    band: ai_adjacent_engineering
+    label: Software Engineer (AI product)
+    title_synonyms: [software engineer, software development engineer, sde, swe, full stack engineer, backend engineer, frontend engineer, founding engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: false, requires_ai_company_or_feature: true}
+    typical_background: General SWE at an AI company or on an AI feature.
+    qualifying_degree_fields: *cs_ai_degrees
+  backend_engineer_ml_systems:
+    band: ai_adjacent_engineering
+    label: Backend Engineer (ML systems)
+    title_synonyms: [backend engineer ml, ml backend engineer, ml systems engineer, machine learning systems engineer, inference engineer, model serving engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: high, customer_facing: false}
+    typical_background: Distributed systems, serving, latency, GPUs.
+    qualifying_degree_fields: *cs_ai_degrees
+  mlops_engineer:
+    band: ai_adjacent_engineering
+    label: MLOps Engineer
+    title_synonyms: [mlops engineer, ml ops engineer, machine learning operations engineer, ml infrastructure engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: high, customer_facing: false}
+    typical_background: Pipelines, CI/CD for models, monitoring, feature stores.
+    qualifying_degree_fields: *cs_ai_degrees
+  ml_platform_infra:
+    band: ai_adjacent_engineering
+    label: ML Platform / Infra
+    title_synonyms: [ml platform engineer, ai platform engineer, ai infrastructure engineer, ml infra engineer, gpu infrastructure engineer, hpc engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: high, customer_facing: false}
+    typical_background: Kubernetes, distributed training infra, schedulers, accelerators.
+    qualifying_degree_fields: *cs_ai_degrees
+  data_engineer:
+    band: ai_adjacent_engineering
+    label: Data Engineer
+    title_synonyms: [data engineer, analytics engineer, data platform engineer, big data engineer, etl engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: high, customer_facing: false}
+    typical_background: SQL, Spark, pipelines, warehouses.
+    qualifying_degree_fields: *cs_ai_degrees
+  ml_devops_cloud:
+    band: ai_adjacent_engineering
+    label: ML DevOps / Cloud
+    title_synonyms: [devops engineer ml, cloud engineer ai, site reliability engineer ml, sre ml, ai cloud engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: high, customer_facing: false}
+    typical_background: Cloud, IaC, reliability for ML workloads.
+    qualifying_degree_fields: *cs_ai_degrees
+  search_recsys_engineer:
+    band: ai_adjacent_engineering
+    label: Search / Recommendations Engineer
+    title_synonyms: [search engineer, recommendations engineer, recommender systems engineer, ranking engineer, relevance engineer, personalization engineer]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: Retrieval, ranking models, embeddings, A/B testing.
+    qualifying_degree_fields: *cs_ai_degrees
+  robotics_perception:
+    band: ai_adjacent_engineering
+    label: Robotics / Perception
+    title_synonyms: [robotics engineer, robotics software engineer, perception software engineer, autonomy engineer, motion planning engineer, slam engineer]
+    signals: {publications_expected: sometimes, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: ROS, sensors, planning, perception models.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_security_engineer:
+    band: ai_adjacent_engineering
+    label: AI Security Engineer
+    title_synonyms: [ai security engineer, ml security engineer, ai safety engineer, adversarial ml engineer, trust and safety engineer ai]
+    signals: {publications_expected: sometimes, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: Security plus ML; adversarial robustness, model abuse.
+    qualifying_degree_fields: *cs_ai_degrees
+
+  # ── Data and analytics ──────────────────────────────────────────────────
+  data_scientist:
+    band: data_and_analytics
+    label: Data Scientist
+    title_synonyms: [data scientist, senior data scientist, product data scientist, machine learning data scientist]
+    signals: {publications_expected: false, production_systems: sometimes, infra_depth: low, customer_facing: false}
+    typical_background: Statistics, modeling, SQL/Python, experimentation.
+    qualifying_degree_fields: *cs_ai_degrees
+  data_analyst_ai:
+    band: data_and_analytics
+    label: Data Analyst (AI)
+    title_synonyms: [data analyst, ai data analyst, product analyst, analytics analyst]
+    signals: {publications_expected: false, production_systems: false, infra_depth: low, customer_facing: false, requires_ai_company_or_feature: true}
+    typical_background: SQL, dashboards, analysis for AI products/teams.
+    qualifying_degree_fields: *cs_ai_degrees
+  bi_analytics_engineer:
+    band: data_and_analytics
+    label: BI / Analytics Engineer
+    title_synonyms: [business intelligence engineer, bi engineer, bi analyst, analytics engineer bi]
+    signals: {publications_expected: false, production_systems: false, infra_depth: medium, customer_facing: false, requires_ai_company_or_feature: true}
+    typical_background: dbt, warehouses, BI tools.
+    qualifying_degree_fields: *cs_ai_degrees
+  quantitative_analyst:
+    band: data_and_analytics
+    label: Quantitative Analyst / Researcher
+    title_synonyms: [quantitative analyst, quant analyst, quantitative researcher, quant researcher, quantitative developer]
+    signals: {publications_expected: sometimes, production_systems: true, infra_depth: medium, customer_facing: false}
+    typical_background: Math/stats/ML for trading and risk; Python/C++.
+    qualifying_degree_fields: *cs_ai_degrees
+  decision_scientist:
+    band: data_and_analytics
+    label: Decision Scientist
+    title_synonyms: [decision scientist, applied decision scientist, experimentation scientist]
+    signals: {publications_expected: false, production_systems: false, infra_depth: low, customer_facing: false}
+    typical_background: Causal inference, experimentation, business modeling.
+    qualifying_degree_fields: *cs_ai_degrees
+  research_analyst_ai:
+    band: data_and_analytics
+    label: Research Analyst (AI)
+    title_synonyms: [research analyst, ai research analyst, market research analyst ai, technical research analyst]
+    signals: {publications_expected: false, production_systems: false, infra_depth: low, customer_facing: sometimes, requires_ai_company_or_feature: true}
+    typical_background: Analysis and writing on AI systems, benchmarks, markets.
+    qualifying_degree_fields: *cs_ai_degrees
+
+  # ── Technical AI roles that aren't core coding ─────────────────────────
+  ai_product_manager:
+    band: technical_non_coding
+    label: AI Product Manager
+    title_synonyms: [ai product manager, product manager ai, technical product manager ml, machine learning product manager, associate product manager ai]
+    signals: {publications_expected: false, production_systems: false, infra_depth: low, customer_facing: true}
+    typical_background: Technical degree plus product sense; ML literacy.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_solutions_architect:
+    band: technical_non_coding
+    label: AI Solutions Architect
+    title_synonyms: [ai solutions architect, solutions architect ai, ml solutions architect, ai solutions engineer, solutions engineer ai]
+    signals: {publications_expected: false, production_systems: sometimes, infra_depth: medium, customer_facing: true}
+    typical_background: Designing customer deployments of AI systems.
+    qualifying_degree_fields: *cs_ai_degrees
+  forward_deployed_engineer:
+    band: technical_non_coding
+    label: Forward Deployed Engineer
+    title_synonyms: [forward deployed engineer, fde, deployment strategist, customer engineer ai, implementation engineer ai]
+    signals: {publications_expected: false, production_systems: true, infra_depth: medium, customer_facing: true}
+    typical_background: Engineering embedded with customers to deploy AI.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_consultant:
+    band: technical_non_coding
+    label: AI Consultant
+    title_synonyms: [ai consultant, machine learning consultant, data science consultant, ai strategy consultant, ai analyst consultant]
+    signals: {publications_expected: false, production_systems: sometimes, infra_depth: low, customer_facing: true}
+    typical_background: Advisory and delivery of AI projects for clients.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_trainer_evaluator:
+    band: technical_non_coding
+    label: AI Trainer / Evaluator
+    title_synonyms: [ai trainer, ai evaluator, llm evaluator, model evaluator, rlhf specialist, red team specialist, ai red teamer, data annotation specialist ai, human data specialist]
+    signals: {publications_expected: false, production_systems: false, infra_depth: low, customer_facing: false}
+    typical_background: Evaluation, RLHF data, red-teaming, rubric design.
+    qualifying_degree_fields: *cs_ai_degrees
+  prompt_engineer:
+    band: technical_non_coding
+    label: Prompt Engineer
+    title_synonyms: [prompt engineer, prompt designer, conversation designer ai, llm prompt specialist]
+    signals: {publications_expected: false, production_systems: sometimes, infra_depth: low, customer_facing: sometimes}
+    typical_background: Prompt design, evaluation, LLM behavior.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_technical_program_manager:
+    band: technical_non_coding
+    label: AI Technical Program Manager
+    title_synonyms: [technical program manager ai, tpm ai, ai program manager, ml program manager]
+    signals: {publications_expected: false, production_systems: false, infra_depth: low, customer_facing: sometimes}
+    typical_background: Coordinating ML programs across teams.
+    qualifying_degree_fields: *cs_ai_degrees
+  developer_advocate_ai:
+    band: technical_non_coding
+    label: Developer Advocate (AI)
+    title_synonyms: [developer advocate, developer relations engineer, devrel ai, ai developer advocate, developer educator ai]
+    signals: {publications_expected: false, production_systems: sometimes, infra_depth: low, customer_facing: true, requires_ai_company_or_feature: true}
+    typical_background: Engineering plus communication; demos, docs, talks.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_policy_governance:
+    band: technical_non_coding
+    label: AI Policy / Governance
+    title_synonyms: [ai policy analyst, ai governance analyst, responsible ai analyst, ai ethics analyst, ai risk analyst, ai safety policy]
+    signals: {publications_expected: sometimes, production_systems: false, infra_depth: low, customer_facing: sometimes}
+    typical_background: Technical AI literacy plus policy/risk frameworks.
+    qualifying_degree_fields: *cs_ai_degrees
+  ai_research_assistant_lab:
+    band: technical_non_coding
+    label: AI Research Assistant (lab)
+    title_synonyms: [research assistant ai, research associate ai, lab research assistant machine learning, research fellow ai, predoctoral researcher]
+    signals: {publications_expected: sometimes, production_systems: false, infra_depth: low, customer_facing: false}
+    typical_background: Supporting research programs at labs and institutes.
+    qualifying_degree_fields: *cs_ai_degrees
+
+ai_relevance_levels:
+  core: The job is building AI/ML systems.
+  applied: Engineering or data work directly serving AI/ML systems or products.
+  adjacent: General software/data role at an AI company, or AI is one part of the job.
+  incidental: AI is a buzzword in the posting; the work isn't AI.
+
+dashboard_default_ai_relevance: [core, applied, adjacent]

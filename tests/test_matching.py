@@ -1,4 +1,6 @@
-from app.db.models import Application, ApplicationStatus, Job
+from sqlalchemy import select
+
+from app.db.models import Application, ApplicationStatus, Job, User
 from app.matching.embeddings import similarity
 from app.matching.rules import apply_rules
 from app.matching.scorer import score_job
@@ -68,12 +70,12 @@ def _seed_job(db, **kw):
     job = Job(**defaults)
     db.add(job)
     db.flush()
-    db.add(Application(job_id=job.id, status=ApplicationStatus.discovered))
+    db.add(Application(job_id=job.id, user_id=db.scalar(select(User.id)), status=ApplicationStatus.discovered))
     db.commit()
     return job
 
 
-def test_run_matching_scores_and_advances_status(db):
+def test_run_matching_scores_and_advances_status(db, user):
     job = _seed_job(db)
     result = run_matching(db, resume_text=RESUME, targets={"matching": RULES})
     assert result == {"scored": 1}
@@ -83,7 +85,7 @@ def test_run_matching_scores_and_advances_status(db):
     assert job.application.status == ApplicationStatus.matched
 
 
-def test_run_matching_skips_scored_unless_rescore_all(db):
+def test_run_matching_skips_scored_unless_rescore_all(db, user):
     job = _seed_job(db)
     job.score = 55.0
     db.commit()

@@ -28,8 +28,11 @@ def load_targets(path: str | None = None) -> dict:
         return yaml.safe_load(f) or {}
 
 
-def upsert_job(db: Session, normalized: NormalizedJob) -> tuple[Job, bool]:
-    """Insert or update a job keyed on url. Returns (job, created)."""
+def upsert_job(db: Session, normalized: NormalizedJob, user_id: int) -> tuple[Job, bool]:
+    """Insert or update a job keyed on url. Returns (job, created).
+
+    Jobs are global; the per-user `Application` row created for a new job is
+    owned by `user_id`."""
     existing = db.scalar(select(Job).where(Job.url == normalized.url))
     if existing is not None:
         existing.title = normalized.title
@@ -42,11 +45,11 @@ def upsert_job(db: Session, normalized: NormalizedJob) -> tuple[Job, bool]:
     job = Job(**normalized.model_dump())
     db.add(job)
     db.flush()
-    db.add(Application(job_id=job.id, status=ApplicationStatus.discovered))
+    db.add(Application(job_id=job.id, user_id=user_id, status=ApplicationStatus.discovered))
     return job, True
 
 
-def run_discovery(db: Session, targets: dict | None = None) -> dict:
+def run_discovery(db: Session, targets: dict | None = None, *, user_id: int) -> dict:
     """Fetch every configured board and upsert. Returns per-company counts."""
     targets = targets if targets is not None else load_targets()
     summary = {"created": 0, "updated": 0, "errors": []}
@@ -67,7 +70,7 @@ def run_discovery(db: Session, targets: dict | None = None) -> dict:
         for normalized in normalized_jobs:
             if not normalized.url:
                 continue
-            _, created = upsert_job(db, normalized)
+            _, created = upsert_job(db, normalized, user_id)
             summary["created" if created else "updated"] += 1
     db.commit()
     return summary
