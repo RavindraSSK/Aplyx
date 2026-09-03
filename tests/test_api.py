@@ -18,7 +18,8 @@ def _seed(db, url_suffix, score=None, title="Engineer"):
 
 
 def test_health(client):
-    assert client.get("/health").json() == {"status": "ok"}
+    body = client.get("/health").json()
+    assert body["status"] == "ok" and body["static_present"] is True and body["vertical_present"] is True
 
 
 def test_basic_auth_when_password_set(client, monkeypatch):
