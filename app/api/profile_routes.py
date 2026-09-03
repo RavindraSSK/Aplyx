@@ -2,6 +2,7 @@
 from datetime import datetime
 
 import anthropic
+import httpx
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
@@ -71,6 +72,14 @@ async def upload_resume(
         raise HTTPException(status_code=502, detail=f"Claude API error: {exc.message}")
     except anthropic.APIConnectionError:
         raise HTTPException(status_code=502, detail="Could not reach the Claude API (network).")
+    except httpx.HTTPStatusError as exc:  # embedding provider (Voyage) errors
+        raise HTTPException(
+            status_code=502,
+            detail=f"Embedding provider error {exc.response.status_code} - check VOYAGE_API_KEY "
+            f"(or unset it to use the local fallback).",
+        )
+    except httpx.HTTPError:
+        raise HTTPException(status_code=502, detail="Could not reach the embedding provider (network).")
     return _out(profile)
 
 

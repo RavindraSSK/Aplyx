@@ -226,3 +226,18 @@ def test_upload_reports_bad_api_key_cleanly(client, monkeypatch):
     resp = client.post("/api/resume", files={"file": ("resume.txt", RESUME_TEXT.encode(), "text/plain")})
     assert resp.status_code == 502
     assert "ANTHROPIC_API_KEY" in resp.json()["detail"]
+
+
+def test_upload_reports_embedding_provider_error_cleanly(client, monkeypatch):
+    import httpx
+
+    monkeypatch.setattr("app.profile.service.parse_resume", lambda text, client=None: _fake_result())
+
+    def bad_embed(text):
+        req = httpx.Request("POST", "https://api.voyageai.com/v1/embeddings")
+        raise httpx.HTTPStatusError("401", request=req, response=httpx.Response(401, request=req))
+
+    monkeypatch.setattr("app.profile.service.embed_text", bad_embed)
+    resp = client.post("/api/resume", files={"file": ("resume.txt", RESUME_TEXT.encode(), "text/plain")})
+    assert resp.status_code == 502
+    assert "VOYAGE_API_KEY" in resp.json()["detail"]
