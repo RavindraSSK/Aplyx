@@ -1,16 +1,38 @@
 """Resume ingestion and versioned candidate profiles."""
+import logging
 from types import SimpleNamespace
 
 import anthropic
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.db.models import CandidateProfile, ResumeFile, User
 from app.embeddings.provider import embed_text
 from app.llm.metering import record_usage
 from app.profile.extract import extract_text
-from app.profile.parser import PROFILE_PROMPT_VERSION, ParsedProfile, parse_resume
+from app.profile.heuristic import HEURISTIC_MODEL, heuristic_parse
+from app.profile.parser import PROFILE_PROMPT_VERSION, ParsedProfile, ParseResult, parse_resume
 from app.vertical.loader import load_vertical
+
+logger = logging.getLogger(__name__)
+HEURISTIC_PROMPT_VERSION = "heuristic-parse-1.0"
+
+
+def parse_with_fallback(text: str, client: anthropic.Anthropic | None = None) -> ParseResult:
+    """Claude parser when a key is configured; otherwise (or when the API
+    refuses the call - bad key, no credits) the free extractive parser."""
+    if client is None and not get_settings().anthropic_api_key:
+        return ParseResult(profile=heuristic_parse(text), model=HEURISTIC_MODEL)
+    try:
+        return parse_resume(text, client=client)
+    except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as exc:
+        logger.warning("Claude parser unavailable (%s); using heuristic parser", exc.__class__.__name__)
+    except anthropic.BadRequestError as exc:
+        if "credit" not in str(exc).lower():
+            raise
+        logger.warning("Claude parser unavailable (no credits); using heuristic parser")
+    return ParseResult(profile=heuristic_parse(text), model=HEURISTIC_MODEL)
 
 # Fields the user may override via PATCH /api/profile (everything in the parsed
 # schema plus the taxonomy-derived list).
@@ -83,19 +105,21 @@ def ingest_resume(
     db.add(resume)
     db.flush()
 
-    result = parse_resume(text, client=client)
-    record_usage(
-        db,
-        user_id=user.id,
-        feature="profile_parse",
-        model=result.model,
-        usage=SimpleNamespace(
-            input_tokens=result.input_tokens,
-            output_tokens=result.output_tokens,
-            cache_read_input_tokens=result.cache_read_tokens,
-        ),
-        prompt_version=PROFILE_PROMPT_VERSION,
-    )
+    result = parse_with_fallback(text, client=client)
+    prompt_version = HEURISTIC_PROMPT_VERSION if result.model == HEURISTIC_MODEL else PROFILE_PROMPT_VERSION
+    if result.model != HEURISTIC_MODEL:
+        record_usage(
+            db,
+            user_id=user.id,
+            feature="profile_parse",
+            model=result.model,
+            usage=SimpleNamespace(
+                input_tokens=result.input_tokens,
+                output_tokens=result.output_tokens,
+                cache_read_input_tokens=result.cache_read_tokens,
+            ),
+            prompt_version=PROFILE_PROMPT_VERSION,
+        )
 
     parsed = _normalize_parsed(result.profile)
     previous = latest_profile(db, user)
@@ -110,7 +134,7 @@ def ingest_resume(
         parsed=parsed,
         overrides=overrides,
         effective=effective,
-        prompt_version=PROFILE_PROMPT_VERSION,
+        prompt_version=prompt_version,
         parser_model=result.model,
         embedding=emb.vector,
         embedding_model=emb.model,

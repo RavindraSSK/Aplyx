@@ -73,6 +73,12 @@
             </div>
             <input type="file" id="file" accept=".pdf,.docx,.md,.txt" hidden>
             <div class="meta" id="resume-meta" style="margin-top:10px"></div>
+            <div id="heuristic-note" hidden style="margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(250,178,25,.14);color:var(--ink-2);font-size:12.5px">
+              <b>Parsed without Claude</b> (no API key or credits) — a basic extractive parser was used.
+              Contact, education, skills and titles are filled where found; experience years, sponsorship
+              and target titles are left blank rather than guessed. Fill them in on the right. Add
+              <code>ANTHROPIC_API_KEY</code> with credits and re-upload for a full parse.
+            </div>
           </div>
         </div>
 
@@ -196,6 +202,7 @@ function render() {
   $("form").hidden = false;
   $("version-meta").textContent = `v${PROFILE.version} · ${PROFILE.parser_model} · ${PROFILE.prompt_version} · embed: ${PROFILE.embedding_model}`;
   $("resume-meta").textContent = PROFILE.resume_filename ? `Current resume: ${PROFILE.resume_filename}` : "";
+  $("heuristic-note").hidden = !(PROFILE.parser_model || "").startsWith("heuristic");
 
   const edu = (p.education || []).map(e => `${[e.degree, e.field].filter(Boolean).join(" ")}${e.school ? " — " + e.school : ""}${e.graduation_date ? " (" + e.graduation_date + ")" : ""}`);
   $("parsed-summary").innerHTML = `

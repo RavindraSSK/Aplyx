@@ -179,6 +179,16 @@ sponsorship. The engine is generic; all domain knowledge lives as data in
 - **Versioned artifacts**: `prompt_version`, `parser_model`, `embedding_model`
   stored on every profile row.
 
+### Parsing without API credits
+
+If `ANTHROPIC_API_KEY` is unset, or the API rejects the call (invalid key, no
+credits), resume upload falls back to a free extractive parser
+(`app/profile/heuristic.py`: regexes + the skill taxonomy). It fills contact,
+education, skills, titles and locations where found and leaves experience
+years, sponsorship and target titles blank rather than guessing. Profiles
+record `parser_model = heuristic-1.0` and the dashboard shows a notice.
+Re-upload after adding credits for the full Claude parse.
+
 ### Embeddings
 
 `EMBEDDING_PROVIDER=auto` picks, in order: Voyage AI (`VOYAGE_API_KEY`,

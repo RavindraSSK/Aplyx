@@ -211,7 +211,9 @@ def test_profile_page_served(client):
     assert client.get("/static/app.css").status_code == 200
 
 
-def test_upload_reports_bad_api_key_cleanly(client, monkeypatch):
+def test_upload_falls_back_to_heuristic_when_no_credits(client, monkeypatch):
+    """A rejected Claude call (bad key / no credits) must not 500: the free
+    extractive parser takes over and the profile says so."""
     import httpx
     import anthropic
 
@@ -222,10 +224,16 @@ def test_upload_reports_bad_api_key_cleanly(client, monkeypatch):
             body=None,
         )
 
+    from app.config import get_settings
+
+    monkeypatch.setattr("app.profile.service.get_settings",
+                        lambda: get_settings().model_copy(update={"anthropic_api_key": "sk-ant-bad"}))
     monkeypatch.setattr("app.profile.service.parse_resume", boom)
     resp = client.post("/api/resume", files={"file": ("resume.txt", RESUME_TEXT.encode(), "text/plain")})
-    assert resp.status_code == 502
-    assert "ANTHROPIC_API_KEY" in resp.json()["detail"]
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["parser_model"] == "heuristic-1.0"
+    assert body["effective"]["email"] == "jane@example.com"
 
 
 def test_upload_reports_embedding_provider_error_cleanly(client, monkeypatch):
