@@ -209,3 +209,20 @@ def test_profile_page_served(client):
     resp = client.get("/profile")
     assert resp.status_code == 200 and "Review" in resp.text
     assert client.get("/static/app.css").status_code == 200
+
+
+def test_upload_reports_bad_api_key_cleanly(client, monkeypatch):
+    import httpx
+    import anthropic
+
+    def boom(text, client=None):
+        raise anthropic.AuthenticationError(
+            "API key is invalid.",
+            response=httpx.Response(401, request=httpx.Request("POST", "https://api.anthropic.com/v1/messages")),
+            body=None,
+        )
+
+    monkeypatch.setattr("app.profile.service.parse_resume", boom)
+    resp = client.post("/api/resume", files={"file": ("resume.txt", RESUME_TEXT.encode(), "text/plain")})
+    assert resp.status_code == 502
+    assert "ANTHROPIC_API_KEY" in resp.json()["detail"]
