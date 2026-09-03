@@ -7,8 +7,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.db.models import Base
+from app.auth import AuthProvider
+from app.db.models import Base, User
 from app.db.session import get_db
+from app.db.tenancy import current_user_id
 from app.main import app
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -35,8 +37,34 @@ def db():
 
 
 @pytest.fixture
-def client(db):
+def user(db):
+    u = User(email="test@example.com", display_name="Test")
+    db.add(u)
+    db.commit()
+    token = current_user_id.set(u.id)
+    try:
+        yield u
+    finally:
+        current_user_id.reset(token)
+
+
+class StaticAuthProvider(AuthProvider):
+    """Test double: every request is `user_id`."""
+
+    def __init__(self, user_id: int):
+        self.user_id = user_id
+
+    def authenticate(self, request):
+        return self.user_id
+
+    def challenge_headers(self):
+        return {}
+
+
+@pytest.fixture
+def client(db, user, monkeypatch):
     app.dependency_overrides[get_db] = lambda: db
+    monkeypatch.setattr("app.main.get_auth_provider", lambda: StaticAuthProvider(user.id))
     try:
         yield TestClient(app)
     finally:

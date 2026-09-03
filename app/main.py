@@ -1,47 +1,50 @@
 """FastAPI application entrypoint."""
-import base64
-import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 
+from app.api.profile_routes import router as profile_router
 from app.api.routes import router
-from app.config import get_settings
-from app.db.session import init_db
+from app.auth import ensure_owner, get_auth_provider
+from app.db.session import get_session_factory, init_db
+from app.db.tenancy import current_user_id
 
-DASHBOARD = Path(__file__).parent / "static" / "index.html"
+STATIC = Path(__file__).parent / "static"
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    db = get_session_factory()()
+    try:
+        ensure_owner(db)
+    finally:
+        db.close()
     yield
 
 
-app = FastAPI(title="jobagent", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="jobagent", version="0.2.0", lifespan=lifespan)
 app.include_router(router)
+app.include_router(profile_router)
+app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
 
 @app.middleware("http")
-async def basic_auth_guard(request: Request, call_next):
-    """If DASHBOARD_PASSWORD is set, require HTTP Basic auth on every route."""
-    password = get_settings().dashboard_password
-    if password:
-        header = request.headers.get("authorization", "")
-        supplied = ""
-        if header.startswith("Basic "):
-            try:
-                supplied = base64.b64decode(header[6:]).decode().partition(":")[2]
-            except Exception:
-                supplied = ""
-        if not secrets.compare_digest(supplied, password):
-            return Response(
-                status_code=401,
-                headers={"WWW-Authenticate": 'Basic realm="jobagent"'},
-            )
-    return await call_next(request)
+async def auth_guard(request: Request, call_next):
+    """Authenticate via the configured AuthProvider and scope the request to
+    that user (tenancy contextvar -> Postgres RLS)."""
+    provider = get_auth_provider()
+    uid = provider.authenticate(request)
+    if uid is None:
+        return Response(status_code=401, headers=provider.challenge_headers())
+    token = current_user_id.set(uid)
+    try:
+        return await call_next(request)
+    finally:
+        current_user_id.reset(token)
 
 
 @app.get("/health")
@@ -51,4 +54,9 @@ def health():
 
 @app.get("/", include_in_schema=False)
 def dashboard():
-    return FileResponse(DASHBOARD, media_type="text/html")
+    return FileResponse(STATIC / "index.html", media_type="text/html")
+
+
+@app.get("/profile", include_in_schema=False)
+def profile_page():
+    return FileResponse(STATIC / "profile.html", media_type="text/html")

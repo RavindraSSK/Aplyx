@@ -17,11 +17,20 @@ def main(argv: list[str] | None = None) -> int:
 
     init_db()
     db = get_session_factory()()
+    from app.auth import ensure_owner
+    from app.db.tenancy import as_user
+
+    owner = ensure_owner(db)
+    with as_user(owner.id):
+        return _run(args, db, owner.id)
+
+
+def _run(args, db, user_id: int) -> int:
     try:
         if args.command == "discover":
             from app.discovery.service import run_discovery
 
-            summary = run_discovery(db)
+            summary = run_discovery(db, user_id=user_id)
             print(f"created={summary['created']} updated={summary['updated']}")
             for err in summary["errors"]:
                 print(f"error: {err}", file=sys.stderr)
@@ -42,7 +51,7 @@ def main(argv: list[str] | None = None) -> int:
             if job is None:
                 print(f"job {args.job_id} not found", file=sys.stderr)
                 return 1
-            record = tailor_job(db, job)
+            record = tailor_job(db, job, user_id=user_id)
             print(f"tailored resume #{record.id} saved for '{job.title}' @ {job.company}")
             print("--- diff ---")
             print(record.diff)

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jobagent · Profile</title>
+<link rel="stylesheet" href="/static/app.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .field label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .field label small { text-transform: none; letter-spacing: 0; font-weight: 500; margin-left: 6px; color: var(--accent); }
+  .field input, .field textarea, .field select { width: 100%; }
+  .field textarea { min-height: 72px; resize: vertical; }
+  .field .note { font-size: 12px; color: var(--muted); }
+  .drop {
+    border: 1.5px dashed var(--hairline); border-radius: 12px; padding: 26px 18px;
+    text-align: center; color: var(--ink-2); background: var(--surface); cursor: pointer;
+  }
+  .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  .drop b { color: var(--ink); }
+  .edu { display: grid; grid-template-columns: 1fr 1.4fr 1.4fr .8fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .edu input { width: 100%; }
+  .edu button { padding: 6px 10px; }
+  .meta { font-size: 12.5px; color: var(--muted); }
+  .sticky-actions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .kv { font-size: 12.5px; color: var(--ink-2); }
+  .kv b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <div class="brand"><span class="mark">j</span> jobagent <small>v0.2</small></div>
+    <nav>
+      <a href="/">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.2"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1.2"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1.2"/><rect x="9" y="9" width="5.5" height="5.5" rx="1.2"/></svg>
+        Overview
+      </a>
+      <a class="active" href="/profile">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.5" r="3"/><path d="M2.5 14a5.5 5.5 0 0 1 11 0"/></svg>
+        Profile
+      </a>
+      <a class="soon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 5.5h12M2 5.5V13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5.5M5.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5"/></svg>
+        Auto-apply <i>soon</i>
+      </a>
+    </nav>
+    <div class="side-foot">Your edits always win over parsed values.</div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Profile</h1>
+        <div class="sub">Upload your resume once; review and correct what was parsed.</div>
+      </div>
+      <span class="spacer"></span>
+      <button class="icon" id="btn-theme" title="Toggle theme" aria-label="Toggle theme">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 9.5A5.7 5.7 0 0 1 6.5 2.5a5.7 5.7 0 1 0 7 7Z"/></svg>
+      </button>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-head">Resume</div>
+          <div class="card-body">
+            <div class="drop" id="drop">
+              <b>Drop a PDF / DOCX / Markdown here</b> or click to choose<br>
+              <span class="muted">Parsed with Claude into the fields on the right. Max 5 MB.</span>
+            </div>
+            <input type="file" id="file" accept=".pdf,.docx,.md,.txt" hidden>
+            <div class="meta" id="resume-meta" style="margin-top:10px"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">Parsed profile <span class="muted" style="font-weight:400;margin-left:auto" id="version-meta"></span></div>
+          <div class="card-body" id="parsed-summary">
+            <div class="empty"><b>No profile yet</b>Upload a resume to get started.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Review &amp; edit <span class="muted" style="font-weight:400;margin-left:auto">blank = not listed</span></div>
+        <div class="card-body">
+          <form id="form" hidden>
+            <div class="field"><label>Name</label><input name="name"></div>
+            <div class="field"><label>Email</label><input name="email"></div>
+            <div class="field"><label>Phone</label><input name="phone"></div>
+            <div class="field"><label>LinkedIn</label><input name="linkedin_url"></div>
+            <div class="field"><label>GitHub</label><input name="github_url"></div>
+            <div class="field"><label>Summary</label><textarea name="summary"></textarea></div>
+
+            <div class="field">
+              <label>Education</label>
+              <div id="edu-rows"></div>
+              <button type="button" id="add-edu">+ add education</button>
+            </div>
+
+            <div class="field"><label>Years of experience</label><input name="years_of_experience" type="number" step="0.5" min="0"></div>
+            <div class="field"><label>Work authorization <small>as stated on resume</small></label><input name="work_authorization"></div>
+            <div class="field"><label>Needs sponsorship</label>
+              <select name="needs_sponsorship"><option value="">Not listed</option><option value="true">Yes</option><option value="false">No</option></select></div>
+            <div class="field"><label>Skills <small>normalized to taxonomy</small></label><textarea name="skills"></textarea><span class="note">comma-separated</span></div>
+            <div class="field"><label>Other skills <small>not in taxonomy</small></label><textarea name="other_skills"></textarea><span class="note">comma-separated</span></div>
+            <div class="field"><label>Titles held</label><textarea name="titles_held"></textarea><span class="note">comma-separated</span></div>
+            <div class="field"><label>Target titles <small>inferred</small></label><textarea name="inferred_target_titles"></textarea><span class="note">comma-separated</span></div>
+            <div class="field"><label>Seniority band <small>inferred</small></label>
+              <select name="seniority_band"><option value="">Not listed</option>
+                <option>intern</option><option>new_grad</option><option>junior</option><option>mid</option><option>senior</option><option>staff_plus</option></select></div>
+            <div class="field"><label>Locations</label><input name="locations"><span class="note">comma-separated</span></div>
+            <div class="field"><label>Remote preference</label>
+              <select name="remote_preference"><option value="">Not listed</option>
+                <option>remote</option><option>hybrid</option><option>onsite</option><option>flexible</option></select></div>
+
+            <div class="sticky-actions">
+              <button type="submit" class="primary">Save corrections</button>
+              <button type="button" id="reset-overrides">Reset to parsed</button>
+              <span class="muted" id="save-meta"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const LIST_FIELDS = ["skills","other_skills","titles_held","inferred_target_titles","locations"];
+let PROFILE = null;
+
+(function initTheme(){ try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {} })();
+$("btn-theme").addEventListener("click", () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch {}
+});
+
+function toast(msg, isError=false) {
+  const t = $("toast"); t.textContent = msg; t.className = "show" + (isError ? " error" : "");
+  clearTimeout(t._h); t._h = setTimeout(() => t.className = "", 3800);
+}
+async function api(path, opts={}) {
+  const resp = await fetch(path, opts);
+  if (!resp.ok) { let d = resp.statusText; try { d = (await resp.json()).detail || d; } catch {} throw new Error(typeof d === "string" ? d : JSON.stringify(d)); }
+  return resp;
+}
+const esc = s => (s ?? "").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* upload */
+const drop = $("drop"), fileInput = $("file");
+drop.addEventListener("click", () => fileInput.click());
+drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", e => { e.preventDefault(); drop.classList.remove("over"); if (e.dataTransfer.files[0]) upload(e.dataTransfer.files[0]); });
+fileInput.addEventListener("change", () => { if (fileInput.files[0]) upload(fileInput.files[0]); });
+
+async function upload(file) {
+  drop.innerHTML = "<b>Parsing with Claude…</b><br><span class='muted'>usually 10–30 seconds</span>";
+  const fd = new FormData(); fd.append("file", file);
+  try {
+    PROFILE = await (await api("/api/resume", {method: "POST", body: fd})).json();
+    toast(`Parsed ${file.name} → profile v${PROFILE.version}`);
+    render();
+  } catch (err) {
+    toast("Upload failed: " + err.message, true);
+  } finally {
+    drop.innerHTML = "<b>Drop a PDF / DOCX / Markdown here</b> or click to choose<br><span class='muted'>Parsed with Claude into the fields on the right. Max 5 MB.</span>";
+  }
+}
+
+/* render */
+function eduRow(e = {}) {
+  const div = document.createElement("div"); div.className = "edu";
+  div.innerHTML = `
+    <input placeholder="Degree" data-k="degree" value="${esc(e.degree)}">
+    <input placeholder="Field" data-k="field" value="${esc(e.field)}">
+    <input placeholder="School" data-k="school" value="${esc(e.school)}">
+    <input placeholder="Grad (YYYY-MM)" data-k="graduation_date" value="${esc(e.graduation_date)}">
+    <button type="button" title="remove">×</button>`;
+  div.querySelector("button").onclick = () => div.remove();
+  return div;
+}
+$("add-edu").addEventListener("click", () => $("edu-rows").appendChild(eduRow()));
+
+function render() {
+  if (!PROFILE) return;
+  const p = PROFILE.effective, ov = PROFILE.overrides || {};
+  $("form").hidden = false;
+  $("version-meta").textContent = `v${PROFILE.version} · ${PROFILE.parser_model} · ${PROFILE.prompt_version} · embed: ${PROFILE.embedding_model}`;
+  $("resume-meta").textContent = PROFILE.resume_filename ? `Current resume: ${PROFILE.resume_filename}` : "";
+
+  const edu = (p.education || []).map(e => `${[e.degree, e.field].filter(Boolean).join(" ")}${e.school ? " — " + e.school : ""}${e.graduation_date ? " (" + e.graduation_date + ")" : ""}`);
+  $("parsed-summary").innerHTML = `
+    <div class="kv"><b>${esc(p.name) || "Name not listed"}</b>${p.email ? " · " + esc(p.email) : ""}</div>
+    <div class="kv" style="margin-top:6px">${edu.length ? edu.map(esc).join("<br>") : "Education not listed"}</div>
+    <div class="kv" style="margin-top:6px">Experience: <b>${p.years_of_experience ?? "Not listed"}</b> yrs · Seniority: <b>${p.seniority_band || "Not listed"}</b></div>
+    <div class="kv" style="margin-top:6px">Sponsorship: <b>${p.needs_sponsorship === true ? "needs sponsorship" : p.needs_sponsorship === false ? "no sponsorship needed" : "Not listed"}</b>${p.work_authorization ? " · “" + esc(p.work_authorization) + "”" : ""}</div>
+    <div style="margin-top:10px">${(p.skills || []).map(s => `<span class="tag accent">${esc(s)}</span>`).join("")}${(p.other_skills || []).map(s => `<span class="tag">${esc(s)}</span>`).join("")}</div>
+    <div class="kv" style="margin-top:10px">Targets: ${(p.inferred_target_titles || []).map(esc).join(", ") || "—"}</div>
+    <div class="muted" style="margin-top:10px;font-size:12px">${Object.keys(ov).length} manual override(s) applied</div>`;
+
+  const f = $("form");
+  for (const el of f.elements) {
+    if (!el.name) continue;
+    const v = p[el.name];
+    if (LIST_FIELDS.includes(el.name)) el.value = (v || []).join(", ");
+    else if (el.name === "needs_sponsorship") el.value = v === true ? "true" : v === false ? "false" : "";
+    else el.value = v ?? "";
+    const label = el.closest(".field")?.querySelector("label");
+    if (label) label.style.color = el.name in ov ? "var(--accent)" : "";
+  }
+  $("edu-rows").innerHTML = "";
+  for (const e of (p.education || [])) $("edu-rows").appendChild(eduRow(e));
+}
+
+/* save: send only fields that differ from the parsed value */
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = $("form"), patch = {};
+  const parsed = PROFILE.parsed;
+  const splitList = s => s.split(",").map(x => x.trim()).filter(Boolean);
+  for (const el of f.elements) {
+    if (!el.name) continue;
+    let v;
+    if (LIST_FIELDS.includes(el.name)) v = splitList(el.value);
+    else if (el.name === "needs_sponsorship") v = el.value === "" ? null : el.value === "true";
+    else if (el.name === "years_of_experience") v = el.value === "" ? null : parseFloat(el.value);
+    else v = el.value === "" ? null : el.value;
+    const same = JSON.stringify(v) === JSON.stringify(parsed[el.name] ?? null);
+    if (!same) patch[el.name] = v;
+    else if (el.name in (PROFILE.overrides || {})) patch[el.name] = null; // back to parsed -> clear override
+  }
+  const edu = [...$("edu-rows").querySelectorAll(".edu")].map(row => {
+    const o = {}; row.querySelectorAll("input").forEach(i => o[i.dataset.k] = i.value.trim() || null); return o;
+  });
+  if (JSON.stringify(edu) !== JSON.stringify((parsed.education || []).map(e => ({degree: e.degree, field: e.field, school: e.school, graduation_date: e.graduation_date}))))
+    patch.education = edu;
+  if (!Object.keys(patch).length) { toast("Nothing changed."); return; }
+  try {
+    PROFILE = await (await api("/api/profile", {method: "PATCH", headers: {"content-type": "application/json"}, body: JSON.stringify(patch)})).json();
+    toast(`Saved → profile v${PROFILE.version}`);
+    render();
+  } catch (err) { toast("Save failed: " + err.message, true); }
+});
+
+$("reset-overrides").addEventListener("click", async () => {
+  const keys = Object.keys(PROFILE?.overrides || {});
+  if (!keys.length) { toast("No overrides to reset."); return; }
+  const patch = Object.fromEntries(keys.map(k => [k, null]));
+  try {
+    PROFILE = await (await api("/api/profile", {method: "PATCH", headers: {"content-type": "application/json"}, body: JSON.stringify(patch)})).json();
+    toast("Overrides cleared."); render();
+  } catch (err) { toast(err.message, true); }
+});
+
+(async () => {
+  try { PROFILE = await (await api("/api/profile")).json(); render(); }
+  catch (err) { if (!/no profile/i.test(err.message)) toast(err.message, true); }
+})();
+</script>
+</body>
+</html>

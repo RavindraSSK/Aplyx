@@ -1,0 +1,94 @@
+# Vertical config: AI/ML skill taxonomy. Skills extracted from resumes and
+# postings are normalized to `canonical` via `aliases` (case-insensitive).
+# Unmatched skills are kept verbatim in `other_skills` — never dropped.
+vertical: ai
+version: 1
+
+categories:
+  ml_frameworks:
+    - {canonical: pytorch, aliases: [torch, py torch]}
+    - {canonical: tensorflow, aliases: [tf, tensor flow]}
+    - {canonical: keras, aliases: []}
+    - {canonical: jax, aliases: [flax]}
+    - {canonical: scikit-learn, aliases: [sklearn, scikit learn]}
+    - {canonical: xgboost, aliases: [lightgbm, catboost, gradient boosting]}
+    - {canonical: hugging face transformers, aliases: [huggingface, hugging face, transformers library, hf transformers]}
+  llm_and_nlp:
+    - {canonical: large language models, aliases: [llm, llms, language models, foundation models]}
+    - {canonical: transformers, aliases: [transformer architecture, attention, self-attention]}
+    - {canonical: fine-tuning, aliases: [finetuning, fine tuning, lora, peft, instruction tuning, sft]}
+    - {canonical: rag, aliases: [retrieval augmented generation, retrieval-augmented generation]}
+    - {canonical: prompt engineering, aliases: [prompting, prompt design]}
+    - {canonical: llm evaluation, aliases: [model evaluation, evals, benchmarking llms]}
+    - {canonical: rlhf, aliases: [reinforcement learning from human feedback, dpo, preference optimization]}
+    - {canonical: nlp, aliases: [natural language processing, text mining, text classification]}
+    - {canonical: vector databases, aliases: [pgvector, pinecone, weaviate, faiss, milvus, chroma, qdrant]}
+    - {canonical: ai agents, aliases: [agents, agentic, langchain, langgraph, llamaindex, tool use]}
+    - {canonical: speech recognition, aliases: [asr, speech to text, whisper]}
+  computer_vision:
+    - {canonical: computer vision, aliases: [cv, image processing, vision]}
+    - {canonical: object detection, aliases: [yolo, detection, segmentation, instance segmentation]}
+    - {canonical: opencv, aliases: [open cv]}
+    - {canonical: diffusion models, aliases: [stable diffusion, image generation, generative models]}
+  ml_fundamentals:
+    - {canonical: machine learning, aliases: [ml, statistical learning]}
+    - {canonical: deep learning, aliases: [dl, neural networks, neural nets, cnn, rnn, lstm]}
+    - {canonical: reinforcement learning, aliases: [rl, deep rl]}
+    - {canonical: statistics, aliases: [statistical modeling, probability, bayesian, hypothesis testing]}
+    - {canonical: experimentation, aliases: [a/b testing, ab testing, experiment design, causal inference]}
+    - {canonical: recommender systems, aliases: [recommendation systems, recsys, ranking, personalization]}
+    - {canonical: time series, aliases: [forecasting, time-series]}
+    - {canonical: optimization, aliases: [convex optimization, mathematical optimization]}
+  mlops_infra:
+    - {canonical: mlops, aliases: [ml ops, model deployment, model serving, ml pipelines]}
+    - {canonical: mlflow, aliases: [weights and biases, wandb, experiment tracking]}
+    - {canonical: docker, aliases: [containers, containerization]}
+    - {canonical: kubernetes, aliases: [k8s, kubeflow]}
+    - {canonical: aws, aliases: [amazon web services, sagemaker, ec2, s3, lambda]}
+    - {canonical: gcp, aliases: [google cloud, google cloud platform, vertex ai, bigquery]}
+    - {canonical: azure, aliases: [microsoft azure, azure ml]}
+    - {canonical: distributed training, aliases: [multi-gpu, deepspeed, fsdp, horovod, ray]}
+    - {canonical: cuda, aliases: [gpu programming, triton, tensorrt]}
+    - {canonical: onnx, aliases: [model optimization, quantization]}
+    - {canonical: ci/cd, aliases: [github actions, jenkins, gitlab ci, continuous integration]}
+    - {canonical: terraform, aliases: [infrastructure as code, iac]}
+    - {canonical: linux, aliases: [unix, bash, shell scripting]}
+  data_engineering:
+    - {canonical: sql, aliases: [postgresql, postgres, mysql, t-sql, plsql]}
+    - {canonical: spark, aliases: [pyspark, apache spark, databricks]}
+    - {canonical: airflow, aliases: [apache airflow, dagster, prefect, workflow orchestration]}
+    - {canonical: kafka, aliases: [apache kafka, streaming, event streaming, flink]}
+    - {canonical: data warehousing, aliases: [snowflake, redshift, dbt, data warehouse]}
+    - {canonical: etl, aliases: [elt, data pipelines, data integration]}
+    - {canonical: pandas, aliases: [numpy, scipy, data wrangling]}
+    - {canonical: hadoop, aliases: [hive, hdfs]}
+  programming:
+    - {canonical: python, aliases: [python3, py]}
+    - {canonical: c++, aliases: [cpp, c/c++]}
+    - {canonical: java, aliases: []}
+    - {canonical: scala, aliases: []}
+    - {canonical: go, aliases: [golang]}
+    - {canonical: rust, aliases: []}
+    - {canonical: r, aliases: [r language, r programming]}
+    - {canonical: javascript, aliases: [typescript, node, node.js, react, next.js]}
+    - {canonical: matlab, aliases: []}
+    - {canonical: git, aliases: [github, version control]}
+    - {canonical: rest apis, aliases: [fastapi, flask, django, api development, microservices, grpc]}
+    - {canonical: data structures and algorithms, aliases: [algorithms, dsa, leetcode]}
+    - {canonical: system design, aliases: [distributed systems, scalability]}
+  analytics_bi:
+    - {canonical: tableau, aliases: []}
+    - {canonical: power bi, aliases: [powerbi]}
+    - {canonical: excel, aliases: [spreadsheets, google sheets]}
+    - {canonical: data visualization, aliases: [matplotlib, seaborn, plotly, looker]}
+  robotics:
+    - {canonical: ros, aliases: [ros2, robot operating system]}
+    - {canonical: slam, aliases: [localization, mapping]}
+    - {canonical: sensor fusion, aliases: [lidar, kalman filter]}
+    - {canonical: motion planning, aliases: [path planning, control systems]}
+  product_and_communication:
+    - {canonical: product management, aliases: [product strategy, roadmapping, prd]}
+    - {canonical: technical writing, aliases: [documentation, technical documentation]}
+    - {canonical: stakeholder management, aliases: [cross-functional collaboration, communication]}
+    - {canonical: agile, aliases: [scrum, jira, kanban]}
+    - {canonical: research, aliases: [publications, academic research, literature review]}

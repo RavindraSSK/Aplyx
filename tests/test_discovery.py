@@ -63,7 +63,7 @@ def test_ashby_normalization(monkeypatch):
     assert "sponsorship" in j.description
 
 
-def test_run_discovery_upserts_and_dedupes(db, monkeypatch):
+def test_run_discovery_upserts_and_dedupes(db, user, monkeypatch):
     _patch_json(monkeypatch, GreenhouseFetcher, "greenhouse.json")
     _patch_json(monkeypatch, LeverFetcher, "lever.json")
     _patch_json(monkeypatch, AshbyFetcher, "ashby.json")
@@ -75,20 +75,21 @@ def test_run_discovery_upserts_and_dedupes(db, monkeypatch):
         ]
     }
 
-    first = run_discovery(db, targets)
+    first = run_discovery(db, targets, user_id=user.id)
     assert first == {"created": 5, "updated": 0, "errors": []}
     assert db.scalar(select(Job).where(Job.title == "Backend Developer")) is not None
     # every new job gets a 'discovered' application
     apps = db.scalars(select(Application)).all()
     assert len(apps) == 5
     assert all(a.status == ApplicationStatus.discovered for a in apps)
+    assert all(a.user_id == user.id for a in apps)
 
-    second = run_discovery(db, targets)
+    second = run_discovery(db, targets, user_id=user.id)
     assert second == {"created": 0, "updated": 5, "errors": []}
     assert len(db.scalars(select(Job)).all()) == 5
 
 
-def test_run_discovery_survives_one_bad_board(db, monkeypatch):
+def test_run_discovery_survives_one_bad_board(db, user, monkeypatch):
     _patch_json(monkeypatch, GreenhouseFetcher, "greenhouse.json")
 
     def boom(self, url):
@@ -101,18 +102,18 @@ def test_run_discovery_survives_one_bad_board(db, monkeypatch):
             {"name": "Acme", "source": "greenhouse", "slug": "acme"},
         ]
     }
-    summary = run_discovery(db, targets)
+    summary = run_discovery(db, targets, user_id=user.id)
     assert summary["created"] == 2
     assert len(summary["errors"]) == 1 and "Globex" in summary["errors"][0]
 
 
-def test_upsert_updates_fields_in_place(db, monkeypatch):
+def test_upsert_updates_fields_in_place(db, user, monkeypatch):
     _patch_json(monkeypatch, GreenhouseFetcher, "greenhouse.json")
     [j1, _] = GreenhouseFetcher().fetch("acme", "Acme")
-    job, created = upsert_job(db, j1)
+    job, created = upsert_job(db, j1, user.id)
     assert created is True
     j1.title = "Software Engineer II, Backend"
-    job2, created2 = upsert_job(db, j1)
+    job2, created2 = upsert_job(db, j1, user.id)
     assert created2 is False
     assert job2.id == job.id
     assert job2.title == "Software Engineer II, Backend"

@@ -125,9 +125,74 @@ All external calls (ATS APIs, Claude) are mocked; tests run against in-memory SQ
 | `CLAUDE_MODEL` | `claude-sonnet-4-6` | tailoring model |
 | `RESUME_PATH` | `data/resume.md` | master resume |
 | `TARGETS_PATH` | `data/targets.yaml` | boards + matching rules |
-| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | needs the `[ml]` extra |
+| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | local provider, needs the `[ml]` extra |
+| `EMBEDDING_PROVIDER` | `auto` | `auto` / `voyage` / `local` / `hashing` |
+| `VOYAGE_API_KEY` | — | Voyage AI embeddings (recommended for Vercel) |
+| `VOYAGE_MODEL` | `voyage-3-lite` | Voyage model |
+| `OWNER_EMAIL` | `owner@local` | identity of the single owner user |
+| `DASHBOARD_PASSWORD` | — | Basic-auth password (required when public) |
+| `VERTICAL` | `ai` | which `config/vertical/<name>/` to load |
 
 Secrets live only in `.env` (gitignored). Never commit it.
+
+## Phase 1 (Aplyx) — status
+
+Aplyx is vertical: built for a US-based M.S./Ph.D. candidate in AI/CS who needs
+sponsorship. The engine is generic; all domain knowledge lives as data in
+`config/vertical/ai/` (role families, skill taxonomy) and is read only through
+`app/vertical/loader.py`.
+
+| Milestone | Status |
+|---|---|
+| 1.1 Resume ingestion + versioned profile | ✅ done |
+| 1.2 Source adapters (ATS + aggregators) | ⬜ next |
+| 1.3 Enrichment (H-1B, E-Verify, staffing, dates) | ⬜ |
+| 1.4 Employer tiering | ⬜ |
+| 1.5 Matching (vector recall → features → LLM rerank) | ⬜ |
+
+### Milestone 1.1 — what shipped
+
+- `POST /api/resume` (PDF/DOCX/MD/TXT) → text extraction → one Claude call with a
+  strict JSON schema (`app/profile/parser.py`, prompt version stamped on every
+  row) → skills normalized against the taxonomy (unknowns kept in `other_skills`)
+  → profile embedded → stored as a new **version** in `candidate_profiles`.
+- `GET /api/profile`, `PATCH /api/profile`: manual corrections are stored as
+  `overrides` and always win; they survive re-uploads. Sending `null` for a field
+  clears the override. Every change is a new version.
+- Dashboard page **/profile**: drag-and-drop upload, parsed summary, inline editor
+  for every field (overridden fields are highlighted).
+- `GET /api/vertical` exposes bands, families and skills for UI pickers.
+
+### Startup-readiness done in 1.1 (Section 4)
+
+- **Multi-tenant**: `users` table; `user_id` (FK + index) on every per-user table
+  (`applications`, `tailored_resumes`, `resume_files`, `candidate_profiles`,
+  `llm_usage`). Jobs stay global.
+- **Row-level security** (Postgres): policies + `FORCE ROW LEVEL SECURITY` on
+  every per-user table; `app/db/tenancy.py` sets `app.user_id` per transaction.
+  No user in context ⇒ zero rows (fails closed). Verified against Postgres 16
+  with a non-superuser role.
+- **AuthProvider** interface (`app/auth.py`): HTTP Basic today; swapping to
+  OAuth is one class.
+- **LLM metering**: `llm_usage` logs tokens + estimated cost per user per
+  feature per prompt version, from the first call.
+- **Versioned artifacts**: `prompt_version`, `parser_model`, `embedding_model`
+  stored on every profile row.
+
+### Embeddings
+
+`EMBEDDING_PROVIDER=auto` picks, in order: Voyage AI (`VOYAGE_API_KEY`,
+recommended on Vercel; `voyage-3-lite` by default), local sentence-transformers
+(`pip install -e ".[ml]"`), then a dependency-free hashing fallback (works
+everywhere, low quality — the provider name is stored with each vector so a
+mismatch is visible, never silent). On Postgres with the `pgvector` extension
+(Neon has it) vectors are stored as `vector`; elsewhere as JSON.
+
+### Migrations
+
+`alembic upgrade head` — migration `0002` creates the new tables, backfills
+`user_id` to the owner (`OWNER_EMAIL`), enables RLS and, when available, the
+`vector` extension. Run it against Neon before deploying this version.
 
 ## Deploying to Vercel
 
