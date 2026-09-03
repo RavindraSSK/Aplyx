@@ -128,3 +128,13 @@ def test_patch_application_status(client, db):
 
     missing = client.patch("/applications/999/status", json={"status": "matched"})
     assert missing.status_code == 404
+
+
+def test_vercel_rewritten_path_is_restored(client, db):
+    """Vercel rewrites /health -> /api/index?__path=health; routing must still work."""
+    assert client.get("/api/index?__path=health").json()["status"] == "ok"
+    _seed(db, "v1", score=70.0)
+    jobs = client.get("/api/index?__path=jobs&min_score=50").json()
+    assert len(jobs) == 1 and jobs[0]["score"] == 70.0
+    assert client.get("/api/index?__path=").status_code == 200  # root -> dashboard
+    assert client.get("/health").json()["status"] == "ok"  # untouched paths still fine
