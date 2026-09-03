@@ -1,0 +1,10 @@
+{"totalFound": 2, "content": [
+ {"id": "744000001", "name": "Machine Learning Engineer", "releasedDate": "2026-08-20T10:00:00.000Z",
+  "company": {"identifier": "BoschGroup", "name": "Bosch Group"},
+  "location": {"city": "Sunnyvale", "region": "CA", "country": "us", "remote": false},
+  "typeOfEmployment": {"label": "Full-time"}},
+ {"id": "744000002", "name": "Data Science Intern", "releasedDate": "2026-08-25T10:00:00.000Z",
+  "company": {"identifier": "BoschGroup", "name": "Bosch Group"},
+  "location": {"city": "Pittsburgh", "region": "PA", "country": "us", "remote": true},
+  "typeOfEmployment": {"label": "Intern"}}
+]}

@@ -1,0 +1,6 @@
+{"results": [
+ {"id": "5001", "title": "Machine Learning Engineer", "created": "2026-08-28T12:00:00Z",
+  "company": {"display_name": "Acme"}, "location": {"display_name": "Austin, TX"},
+  "description": "Build ML pipelines with Python...", "redirect_url": "https://www.adzuna.com/land/ad/5001",
+  "salary_min": 120000, "salary_max": 160000, "contract_time": "full_time", "contract_type": "permanent"}
+]}

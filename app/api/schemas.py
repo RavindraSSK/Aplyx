@@ -54,3 +54,5 @@ class DiscoverSummary(BaseModel):
     created: int
     updated: int
     errors: list[str]
+    status: str = "done"
+    run_id: int | None = None

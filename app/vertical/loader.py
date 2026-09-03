@@ -35,6 +35,7 @@ class Vertical:
     ai_relevance_levels: dict
     dashboard_default_ai_relevance: tuple[str, ...]
     skills: tuple[Skill, ...]
+    aggregator_queries: tuple[str, ...] = ()
     _alias_index: dict = field(default_factory=dict, repr=False)
 
     def families_in_band(self, band: str) -> list[RoleFamily]:
@@ -104,5 +105,6 @@ def load_vertical(name: str | None = None) -> Vertical:
         ai_relevance_levels=rf["ai_relevance_levels"],
         dashboard_default_ai_relevance=tuple(rf.get("dashboard_default_ai_relevance", [])),
         skills=tuple(skills),
+        aggregator_queries=tuple(rf.get("aggregator_queries", [])),
         _alias_index=alias_index,
     )

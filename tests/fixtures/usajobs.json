@@ -1,0 +1,10 @@
+{"SearchResult": {"SearchResultItems": [
+ {"MatchedObjectId": "800001", "MatchedObjectDescriptor": {
+   "PositionID": "DE-26-0001", "PositionTitle": "Data Scientist", "PositionURI": "https://www.usajobs.gov/job/800001",
+   "OrganizationName": "National Institutes of Health", "DepartmentName": "Department of Health and Human Services",
+   "PositionLocation": [{"LocationName": "Bethesda, Maryland"}],
+   "PublicationStartDate": "2026-08-15T00:00:00.0000", "ApplicationCloseDate": "2026-09-30T23:59:59.0000",
+   "PositionSchedule": [{"Name": "Full-time"}], "JobGrade": [{"Code": "GS"}], "LowGrade": "12",
+   "PositionRemuneration": [{"MinimumRange": "99200", "MaximumRange": "153354", "Description": "Per Year"}],
+   "UserArea": {"Details": {"JobSummary": "Analyze biomedical data.", "MajorDuties": ["Build models"], "Requirements": "US citizenship required", "TeleworkEligible": true, "RemoteIndicator": "No"}}}}
+]}}

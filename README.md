@@ -132,6 +132,12 @@ All external calls (ATS APIs, Claude) are mocked; tests run against in-memory SQ
 | `OWNER_EMAIL` | `owner@local` | identity of the single owner user |
 | `DASHBOARD_PASSWORD` | — | Basic-auth password (required when public) |
 | `VERTICAL` | `ai` | which `config/vertical/<name>/` to load |
+| `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` | — | Adzuna aggregator (free) |
+| `USAJOBS_API_KEY` / `USAJOBS_EMAIL` | — | USAJOBS aggregator (free) |
+| `AGGREGATORS_ENABLED` | `remotive,remoteok,adzuna,usajobs` | which aggregators run |
+| `INGEST_BATCH_SIZE` | `8` | companies per `/api/discover` slice |
+| `CRON_SECRET` | — | bearer token for the daily Vercel cron |
+| `AUTO_MIGRATE` | `false` (`true` on Vercel) | run migrations on startup |
 
 Secrets live only in `.env` (gitignored). Never commit it.
 
@@ -145,7 +151,7 @@ sponsorship. The engine is generic; all domain knowledge lives as data in
 | Milestone | Status |
 |---|---|
 | 1.1 Resume ingestion + versioned profile | ✅ done |
-| 1.2 Source adapters (ATS + aggregators) | ⬜ next |
+| 1.2 Source adapters (ATS + aggregators) | ✅ done |
 | 1.3 Enrichment (H-1B, E-Verify, staffing, dates) | ⬜ |
 | 1.4 Employer tiering | ⬜ |
 | 1.5 Matching (vector recall → features → LLM rerank) | ⬜ |
@@ -162,6 +168,50 @@ sponsorship. The engine is generic; all domain knowledge lives as data in
 - Dashboard page **/profile**: drag-and-drop upload, parsed summary, inline editor
   for every field (overridden fields are highlighted).
 - `GET /api/vertical` exposes bands, families and skills for UI pickers.
+
+### Milestone 1.2 — what shipped
+
+- **`SourceAdapter` interface + registry** (`app/sources/`): one module per
+  source, shared normalizer, `RawJob` → `Job`. Adding a source is ~50 lines.
+- **ATS adapters (no keys):** Greenhouse, Lever, Ashby, SmartRecruiters,
+  Workday CxS (per-tenant, slug format `tenant.wdN/Site`).
+- **Aggregators (free tiers):** Adzuna (`ADZUNA_APP_ID/KEY`), USAJOBS
+  (`USAJOBS_API_KEY/EMAIL`), Remotive, RemoteOK. A missing key ⇒ that source is
+  reported as `skipped`, never a crash. `AGGREGATORS_ENABLED` picks which run.
+  Search terms come from `aggregator_queries` in the vertical config.
+- **`companies` table** seeded from `config/vertical/ai/companies.yaml`
+  (**363 US employers** across big tech, AI labs, quant, fintech, healthtech,
+  robotics/AV, defense-adjacent, national labs, semis, enterprise; each with
+  `tier_seed` 1/2/3, headcount band, public flag, category). Seeding is
+  idempotent and never overwrites `active` / `tier_override` / fetch status.
+  **Board slugs are unverified until the first successful fetch** — run
+  `python -m app.cli companies verify` and fix any `not_found` with
+  `python -m app.cli companies add <careers-url>` (auto-detects the ATS from
+  the URL or by scanning the page for an embedded ATS link, honoring robots.txt).
+- **Rules 3/4/5:** every job keeps `source_name` + `url`; cross-source dedupe on
+  normalized (company, title, location) with the ATS copy always winning
+  (`duplicate_of` links the aggregator copy); boards that stop returning a
+  posting close it (`status=closed`, `closed_at`); aggregator postings expire
+  after 45 days unseen. `first_seen_at` / `last_seen_at` on every row.
+- **Ingestion runs** (`ingestion_runs`): a run is processed in **slices** —
+  `POST /api/discover` advances one slice (≈8 companies or one aggregator) and
+  returns the run; the dashboard button loops until `status=done`. `GET
+  /api/discover?all=1` loops within a 45 s budget (used by the daily Vercel cron,
+  authenticated with `CRON_SECRET`). Locally `python -m app.cli discover` runs
+  everything in one go. Per-source status/count/duration/error is recorded on
+  the run (`GET /api/runs`, `/api/runs/{id}`).
+- **Company registry API:** `GET /api/companies` (with open-job counts),
+  `POST /api/companies` (careers URL → ATS auto-detect), `PATCH
+  /api/companies/{id}` (`active`, `tier_override`, slug fixes),
+  `POST /api/companies/seed`.
+- **Auto-migration:** `AUTO_MIGRATE` (default on under Vercel) runs
+  `alembic upgrade head` on startup / first request, so schema changes deploy
+  without a manual step.
+
+Serverless choice, documented: Vercel Hobby functions cap at 60 s, so a full
+run (hundreds of boards) cannot finish in one invocation. Ingestion is sliced
+and resumable instead of moved to a separate worker; the dashboard drives the
+slices interactively and the cron does a bounded catch-up daily.
 
 ### Startup-readiness done in 1.1 (Section 4)
 
