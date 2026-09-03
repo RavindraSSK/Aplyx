@@ -1,6 +1,7 @@
 """Milestone 1.1 API: resume upload, profile read, manual corrections."""
 from datetime import datetime
 
+import anthropic
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
@@ -60,6 +61,16 @@ async def upload_resume(
         profile = ingest_resume(db, user, data, file.filename or "resume", file.content_type)
     except UnsupportedResume as exc:
         raise HTTPException(status_code=415, detail=str(exc))
+    except anthropic.AuthenticationError:
+        raise HTTPException(
+            status_code=502,
+            detail="Claude rejected the API key. Set a valid ANTHROPIC_API_KEY in .env "
+            "(or Vercel env vars) and restart.",
+        )
+    except anthropic.APIStatusError as exc:
+        raise HTTPException(status_code=502, detail=f"Claude API error: {exc.message}")
+    except anthropic.APIConnectionError:
+        raise HTTPException(status_code=502, detail="Could not reach the Claude API (network).")
     return _out(profile)
 
 
