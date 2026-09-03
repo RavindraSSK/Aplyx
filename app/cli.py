@@ -2,7 +2,7 @@
 import argparse
 import sys
 
-from app.db.session import get_session_factory, init_db
+from app.db.session import ensure_schema, get_session_factory
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -26,7 +26,7 @@ def main(argv: list[str] | None = None) -> int:
     tailor_p.add_argument("job_id", type=int)
     args = parser.parse_args(argv)
 
-    init_db()
+    ensure_schema()  # alembic upgrade head (idempotent) - works for SQLite and Postgres
     db = get_session_factory()()
     from app.auth import ensure_owner
     from app.db.tenancy import as_user
