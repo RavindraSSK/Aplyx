@@ -1,8 +1,10 @@
 {
   "functions": {
     "api/index.py": {
-      "includeFiles": "{app,config,data}/**"
+      "includeFiles": "{app,config,data}/**",
+      "maxDuration": 60
     }
   },
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index?__path=$1" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index?__path=$1" }],
+  "crons": [{ "path": "/api/discover?all=1", "schedule": "0 6 * * *" }]
 }

@@ -1,18 +1,5 @@
-# Companies to watch. source: greenhouse | lever | ashby
-# slug = the board identifier in the company's careers URL, e.g.
-#   greenhouse: boards.greenhouse.io/<slug>
-#   lever:      jobs.lever.co/<slug>
-#   ashby:      jobs.ashbyhq.com/<slug>
-companies:
-  - name: Anthropic
-    source: greenhouse
-    slug: anthropic
-  - name: Plaid
-    source: lever
-    slug: plaid
-  - name: Ramp
-    source: ashby
-    slug: ramp
+# Companies now live in the database (seeded from config/vertical/<v>/companies.yaml,
+# managed with `python -m app.cli companies ...`). This file only holds matching rules.
 
 # Rule filters applied during matching (all optional).
 matching:

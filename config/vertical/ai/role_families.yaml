@@ -300,3 +300,16 @@ ai_relevance_levels:
   incidental: AI is a buzzword in the posting; the work isn't AI.
 
 dashboard_default_ai_relevance: [core, applied, adjacent]
+
+# Search terms sent to query-based aggregators (Adzuna, USAJOBS, Remotive, RemoteOK)
+aggregator_queries:
+  - machine learning engineer
+  - data scientist
+  - AI engineer
+  - applied scientist
+  - NLP engineer
+  - computer vision engineer
+  - MLOps engineer
+  - data engineer
+  - AI product manager
+  - research engineer

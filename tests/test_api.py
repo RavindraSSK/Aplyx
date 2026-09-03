@@ -61,14 +61,11 @@ def test_jobs_include_application(client, db):
     assert job["application"]["resume_version_id"] is None
 
 
-def test_discover_run_endpoint(client, monkeypatch):
-    monkeypatch.setattr(
-        "app.api.routes.run_discovery",
-        lambda db, user_id: {"created": 3, "updated": 1, "errors": []},
-    )
-    resp = client.post("/discover/run")
+def test_discover_run_endpoint(client):
+    resp = client.post("/discover/run")  # no companies, no aggregators -> done in one slice
     assert resp.status_code == 200
-    assert resp.json() == {"created": 3, "updated": 1, "errors": []}
+    body = resp.json()
+    assert body["status"] == "done" and body["created"] == 0 and body["errors"] == []
 
 
 def test_list_jobs_with_min_score(client, db):
@@ -138,3 +135,19 @@ def test_vercel_rewritten_path_is_restored(client, db):
     assert len(jobs) == 1 and jobs[0]["score"] == 70.0
     assert client.get("/api/index?__path=").status_code == 200  # root -> dashboard
     assert client.get("/health").json()["status"] == "ok"  # untouched paths still fine
+
+
+def test_ensure_schema_migrates_fresh_sqlite(tmp_path, monkeypatch):
+    from app.config import get_settings
+    from app.db import session as sess
+
+    url = f"sqlite:///{tmp_path}/fresh.db"
+    monkeypatch.setattr(sess, "get_settings", lambda: get_settings().model_copy(update={"database_url": url}))
+    monkeypatch.setattr(sess, "_migrated", False)
+    assert sess.ensure_schema() == "upgraded"
+    assert sess.ensure_schema() == "already"
+    from sqlalchemy import create_engine, text
+
+    with create_engine(url).connect() as c:
+        assert c.execute(text("select version_num from alembic_version")).scalar() == "0003"
+        assert c.execute(text("select count(*) from companies")).scalar() == 0

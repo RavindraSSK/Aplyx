@@ -56,10 +56,14 @@ class BasicAuthProvider(AuthProvider):
         return self._owner_id
 
     def authenticate(self, request: Request) -> int | None:
-        password = get_settings().dashboard_password
+        settings = get_settings()
+        password = settings.dashboard_password
+        header = request.headers.get("authorization", "")
+        if settings.cron_secret and header.startswith("Bearer "):
+            if secrets.compare_digest(header[7:], settings.cron_secret):
+                return self._owner()  # Vercel cron -> owner
         if not password:
             return self._owner()
-        header = request.headers.get("authorization", "")
         supplied = ""
         if header.startswith("Basic "):
             try:

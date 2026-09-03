@@ -1,5 +1,9 @@
 import json
+import os
 from pathlib import Path
+
+os.environ.setdefault("AGGREGATORS_ENABLED", "")  # never hit real aggregator APIs in tests
+os.environ.setdefault("INGEST_BATCH_SIZE", "8")
 
 import pytest
 from fastapi.testclient import TestClient

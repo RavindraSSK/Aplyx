@@ -13,7 +13,7 @@ from app.api.schemas import (
 from app.auth import current_user
 from app.db.models import Application, Job, TailoredResume, User
 from app.db.session import get_db
-from app.discovery.service import run_discovery
+from app.ingest.service import run_discovery, run_summary
 from app.matching.service import run_matching
 from app.tailoring.service import tailor_job
 from app.tracker.service import InvalidTransition, update_status
@@ -23,7 +23,11 @@ router = APIRouter()
 
 @router.post("/discover/run", response_model=DiscoverSummary)
 def discover(db: Session = Depends(get_db), user: User = Depends(current_user)):
-    return run_discovery(db, user_id=user.id)
+    """Legacy endpoint: advances the current ingestion run by one slice."""
+    run = run_discovery(db, user_id=user.id)
+    summary = run_summary(run)
+    return {"created": summary["created"], "updated": summary["updated"], "errors": summary["errors"],
+            "status": summary["status"], "run_id": summary["id"]}
 
 
 @router.post("/match/run")

@@ -1,0 +1,396 @@
+# Seed list: US employers that hire AI/CS Master's graduates into AI-related
+# roles. Loaded into the `companies` table by `python -m app.cli companies seed`
+# (idempotent: matches on slug, never overwrites your manual edits/tier_override).
+#
+# ats: greenhouse | lever | ashby | smartrecruiters | workday
+# ats_slug: the public board identifier. Workday: "tenant.wdN/SiteName".
+# tier_seed: 1 = big tech / large-cap public / major AI lab / top private valuation
+#            2 = ~500-10k headcount, well-funded private, research institutions
+#            3 = startups <500, unknown
+# headcount_band: "<500" | "500-10k" | "10k+"
+#
+# HONESTY NOTE: board slugs are best-known values and are NOT verified until the
+# first ingestion run succeeds (companies.verified / last_fetch_status). Run
+# `python -m app.cli companies verify` to check every board; fix or add boards
+# with `python -m app.cli companies add <careers-url>` (auto-detects the ATS).
+
+vertical: ai
+version: 1
+
+companies:
+  # ── AI labs & model companies ──────────────────────────────────────────
+  - {name: Anthropic, ats: greenhouse, ats_slug: anthropic, category: ai_lab, tier_seed: 1, headcount_band: 500-10k, public: false, domain: anthropic.com, hq: "San Francisco, CA"}
+  - {name: OpenAI, ats: ashby, ats_slug: openai, category: ai_lab, tier_seed: 1, headcount_band: 500-10k, public: false, domain: openai.com, hq: "San Francisco, CA"}
+  - {name: Cohere, ats: greenhouse, ats_slug: cohere, category: ai_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: cohere.com, hq: "Toronto / San Francisco"}
+  - {name: Hugging Face, ats: greenhouse, ats_slug: huggingface, category: ai_lab, tier_seed: 2, headcount_band: <500, public: false, domain: huggingface.co, hq: "New York, NY"}
+  - {name: Scale AI, ats: greenhouse, ats_slug: scaleai, category: ai_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: scale.com, hq: "San Francisco, CA"}
+  - {name: Perplexity, ats: ashby, ats_slug: perplexity, category: ai_lab, tier_seed: 2, headcount_band: <500, public: false, domain: perplexity.ai, hq: "San Francisco, CA"}
+  - {name: Character.AI, ats: greenhouse, ats_slug: characterai, category: ai_lab, tier_seed: 3, headcount_band: <500, public: false, domain: character.ai, hq: "Menlo Park, CA"}
+  - {name: Runway, ats: greenhouse, ats_slug: runwayml, category: ai_lab, tier_seed: 3, headcount_band: <500, public: false, domain: runwayml.com, hq: "New York, NY"}
+  - {name: ElevenLabs, ats: ashby, ats_slug: elevenlabs, category: ai_lab, tier_seed: 2, headcount_band: <500, public: false, domain: elevenlabs.io, hq: "New York, NY"}
+  - {name: Together AI, ats: greenhouse, ats_slug: togetherai, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: together.ai, hq: "San Francisco, CA"}
+  - {name: Anyscale, ats: greenhouse, ats_slug: anyscale, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: anyscale.com, hq: "San Francisco, CA"}
+  - {name: Weights & Biases, ats: greenhouse, ats_slug: wandb, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: wandb.ai, hq: "San Francisco, CA"}
+  - {name: Snorkel AI, ats: greenhouse, ats_slug: snorkelai, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: snorkel.ai, hq: "Redwood City, CA"}
+  - {name: Glean, ats: greenhouse, ats_slug: gleanwork, category: ai_saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: glean.com, hq: "Palo Alto, CA"}
+  - {name: Harvey, ats: ashby, ats_slug: harvey, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: harvey.ai, hq: "San Francisco, CA"}
+  - {name: Sierra, ats: ashby, ats_slug: sierra, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: sierra.ai, hq: "San Francisco, CA"}
+  - {name: Writer, ats: ashby, ats_slug: writer, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: writer.com, hq: "San Francisco, CA"}
+  - {name: Jasper, ats: greenhouse, ats_slug: jasper, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: jasper.ai, hq: "Austin, TX"}
+  - {name: Abridge, ats: greenhouse, ats_slug: abridge, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: abridge.com, hq: "Pittsburgh, PA"}
+  - {name: Cresta, ats: greenhouse, ats_slug: cresta, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: cresta.com, hq: "San Francisco, CA"}
+  - {name: Adept, ats: greenhouse, ats_slug: adept, category: ai_lab, tier_seed: 3, headcount_band: <500, public: false, domain: adept.ai, hq: "San Francisco, CA"}
+  - {name: Inflection AI, ats: greenhouse, ats_slug: inflectionai, category: ai_lab, tier_seed: 3, headcount_band: <500, public: false, domain: inflection.ai, hq: "Palo Alto, CA"}
+  - {name: AI21 Labs, ats: greenhouse, ats_slug: ai21labs, category: ai_lab, tier_seed: 3, headcount_band: <500, public: false, domain: ai21.com, hq: "Tel Aviv / New York"}
+  - {name: Contextual AI, ats: ashby, ats_slug: contextualai, category: ai_lab, tier_seed: 3, headcount_band: <500, public: false, domain: contextual.ai, hq: "Mountain View, CA"}
+  - {name: Cursor (Anysphere), ats: ashby, ats_slug: anysphere, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: cursor.com, hq: "San Francisco, CA"}
+  - {name: Replit, ats: ashby, ats_slug: replit, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: replit.com, hq: "Foster City, CA"}
+  - {name: Modal, ats: ashby, ats_slug: modal, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: modal.com, hq: "New York, NY"}
+  - {name: Baseten, ats: ashby, ats_slug: baseten, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: baseten.co, hq: "San Francisco, CA"}
+  - {name: Fireworks AI, ats: ashby, ats_slug: fireworks-ai, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: fireworks.ai, hq: "Redwood City, CA"}
+  - {name: LangChain, ats: ashby, ats_slug: langchain, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: langchain.com, hq: "San Francisco, CA"}
+  - {name: Pinecone, ats: greenhouse, ats_slug: pinecone, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: pinecone.io, hq: "New York, NY"}
+  - {name: Weaviate, ats: greenhouse, ats_slug: weaviate, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: weaviate.io, hq: "Amsterdam / US"}
+  - {name: Labelbox, ats: greenhouse, ats_slug: labelbox, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: labelbox.com, hq: "San Francisco, CA"}
+  - {name: Databricks, ats: greenhouse, ats_slug: databricks, category: ai_infra, tier_seed: 1, headcount_band: 500-10k, public: false, domain: databricks.com, hq: "San Francisco, CA"}
+  - {name: Snowflake, ats: workday, ats_slug: snowflake.wd5/Snowflake_Careers, category: data_infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: snowflake.com, hq: "Bozeman, MT"}
+  - {name: Cerebras, ats: greenhouse, ats_slug: cerebras, category: semis, tier_seed: 2, headcount_band: 500-10k, public: false, domain: cerebras.ai, hq: "Sunnyvale, CA"}
+  - {name: Groq, ats: greenhouse, ats_slug: groq, category: semis, tier_seed: 2, headcount_band: <500, public: false, domain: groq.com, hq: "Mountain View, CA"}
+  - {name: SambaNova, ats: greenhouse, ats_slug: sambanovasystems, category: semis, tier_seed: 3, headcount_band: <500, public: false, domain: sambanova.ai, hq: "Palo Alto, CA"}
+  - {name: Lambda, ats: greenhouse, ats_slug: lambda, category: ai_infra, tier_seed: 2, headcount_band: <500, public: false, domain: lambda.ai, hq: "San Francisco, CA"}
+  - {name: CoreWeave, ats: greenhouse, ats_slug: coreweave, category: ai_infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: coreweave.com, hq: "Livingston, NJ"}
+  - {name: Mistral AI (US), ats: lever, ats_slug: mistral, category: ai_lab, tier_seed: 2, headcount_band: <500, public: false, domain: mistral.ai, hq: "Paris / Palo Alto"}
+
+  # ── Big tech ────────────────────────────────────────────────────────────
+  - {name: NVIDIA, ats: workday, ats_slug: nvidia.wd5/NVIDIAExternalCareerSite, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: nvidia.com, hq: "Santa Clara, CA"}
+  - {name: Salesforce, ats: workday, ats_slug: salesforce.wd12/External_Career_Site, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: salesforce.com, hq: "San Francisco, CA"}
+  - {name: Adobe, ats: workday, ats_slug: adobe.wd5/external_experienced, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: adobe.com, hq: "San Jose, CA"}
+  - {name: Intel, ats: workday, ats_slug: intel.wd1/External, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: intel.com, hq: "Santa Clara, CA"}
+  - {name: AMD, ats: workday, ats_slug: amd.wd1/External_Career, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: amd.com, hq: "Santa Clara, CA"}
+  - {name: Qualcomm, ats: workday, ats_slug: qualcomm.wd5/External, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: qualcomm.com, hq: "San Diego, CA"}
+  - {name: Dell Technologies, ats: workday, ats_slug: dell.wd1/External, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: dell.com, hq: "Round Rock, TX"}
+  - {name: Cisco, ats: workday, ats_slug: cisco.wd5/Cisco_Careers, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: cisco.com, hq: "San Jose, CA"}
+  - {name: ServiceNow, ats: workday, ats_slug: servicenow.wd1/External, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: servicenow.com, hq: "Santa Clara, CA"}
+  - {name: Workday, ats: workday, ats_slug: workday.wd5/Workday, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: workday.com, hq: "Pleasanton, CA"}
+  - {name: Intuit, ats: workday, ats_slug: intuit.wd1/Intuit, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: intuit.com, hq: "Mountain View, CA"}
+  - {name: PayPal, ats: workday, ats_slug: paypal.wd1/jobs, category: fintech, tier_seed: 1, headcount_band: 10k+, public: true, domain: paypal.com, hq: "San Jose, CA"}
+  - {name: eBay, ats: workday, ats_slug: ebay.wd5/apply, category: ecommerce, tier_seed: 1, headcount_band: 10k+, public: true, domain: ebay.com, hq: "San Jose, CA"}
+  - {name: Uber, ats: greenhouse, ats_slug: uber, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: uber.com, hq: "San Francisco, CA"}
+  - {name: Airbnb, ats: greenhouse, ats_slug: airbnb, category: big_tech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: airbnb.com, hq: "San Francisco, CA"}
+  - {name: Stripe, ats: greenhouse, ats_slug: stripe, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: false, domain: stripe.com, hq: "South San Francisco, CA"}
+  - {name: Coinbase, ats: greenhouse, ats_slug: coinbase, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: coinbase.com, hq: "Remote-first"}
+  - {name: Pinterest, ats: greenhouse, ats_slug: pinterest, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: pinterest.com, hq: "San Francisco, CA"}
+  - {name: Dropbox, ats: greenhouse, ats_slug: dropbox, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: dropbox.com, hq: "San Francisco, CA"}
+  - {name: Lyft, ats: greenhouse, ats_slug: lyft, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: lyft.com, hq: "San Francisco, CA"}
+  - {name: DoorDash, ats: greenhouse, ats_slug: doordash, category: consumer, tier_seed: 1, headcount_band: 10k+, public: true, domain: doordash.com, hq: "San Francisco, CA"}
+  - {name: Instacart, ats: greenhouse, ats_slug: instacart, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: instacart.com, hq: "San Francisco, CA"}
+  - {name: Reddit, ats: greenhouse, ats_slug: reddit, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: reddit.com, hq: "San Francisco, CA"}
+  - {name: Robinhood, ats: greenhouse, ats_slug: robinhood, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: robinhood.com, hq: "Menlo Park, CA"}
+  - {name: Cloudflare, ats: greenhouse, ats_slug: cloudflare, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: cloudflare.com, hq: "San Francisco, CA"}
+  - {name: Datadog, ats: greenhouse, ats_slug: datadog, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: datadoghq.com, hq: "New York, NY"}
+  - {name: MongoDB, ats: greenhouse, ats_slug: mongodb, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: mongodb.com, hq: "New York, NY"}
+  - {name: Twilio, ats: greenhouse, ats_slug: twilio, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: twilio.com, hq: "San Francisco, CA"}
+  - {name: Okta, ats: greenhouse, ats_slug: okta, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: okta.com, hq: "San Francisco, CA"}
+  - {name: HashiCorp, ats: greenhouse, ats_slug: hashicorp, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: hashicorp.com, hq: "San Francisco, CA"}
+  - {name: GitLab, ats: greenhouse, ats_slug: gitlab, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: gitlab.com, hq: "Remote"}
+  - {name: Elastic, ats: greenhouse, ats_slug: elastic, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: elastic.co, hq: "Distributed"}
+  - {name: Confluent, ats: greenhouse, ats_slug: confluent, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: confluent.io, hq: "Mountain View, CA"}
+  - {name: Palantir, ats: lever, ats_slug: palantir, category: big_tech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: palantir.com, hq: "Denver, CO"}
+  - {name: Spotify, ats: lever, ats_slug: spotify, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: spotify.com, hq: "New York, NY"}
+  - {name: Figma, ats: greenhouse, ats_slug: figma, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: figma.com, hq: "San Francisco, CA"}
+  - {name: Discord, ats: greenhouse, ats_slug: discord, category: consumer, tier_seed: 2, headcount_band: 500-10k, public: false, domain: discord.com, hq: "San Francisco, CA"}
+  - {name: Notion, ats: greenhouse, ats_slug: notion, category: saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: notion.so, hq: "San Francisco, CA"}
+  - {name: Canva (US), ats: lever, ats_slug: canva, category: saas, tier_seed: 1, headcount_band: 500-10k, public: false, domain: canva.com, hq: "Sydney / Austin"}
+  - {name: Duolingo, ats: greenhouse, ats_slug: duolingo, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: duolingo.com, hq: "Pittsburgh, PA"}
+  - {name: Grammarly, ats: greenhouse, ats_slug: grammarly, category: ai_saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: grammarly.com, hq: "San Francisco, CA"}
+  - {name: Coursera, ats: greenhouse, ats_slug: coursera, category: edtech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: coursera.org, hq: "Mountain View, CA"}
+  - {name: Udemy, ats: greenhouse, ats_slug: udemy, category: edtech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: udemy.com, hq: "San Francisco, CA"}
+  - {name: Etsy, ats: greenhouse, ats_slug: etsy, category: ecommerce, tier_seed: 1, headcount_band: 500-10k, public: true, domain: etsy.com, hq: "Brooklyn, NY"}
+  - {name: Squarespace, ats: greenhouse, ats_slug: squarespace, category: saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: squarespace.com, hq: "New York, NY"}
+  - {name: Peloton, ats: greenhouse, ats_slug: peloton, category: consumer, tier_seed: 2, headcount_band: 500-10k, public: true, domain: onepeloton.com, hq: "New York, NY"}
+  - {name: Nextdoor, ats: greenhouse, ats_slug: nextdoor, category: consumer, tier_seed: 2, headcount_band: 500-10k, public: true, domain: nextdoor.com, hq: "San Francisco, CA"}
+  - {name: Quora, ats: lever, ats_slug: quora, category: consumer, tier_seed: 3, headcount_band: <500, public: false, domain: quora.com, hq: "Mountain View, CA"}
+  - {name: Kraken, ats: lever, ats_slug: kraken, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: kraken.com, hq: "Remote"}
+  - {name: Samsara, ats: greenhouse, ats_slug: samsara, category: iot, tier_seed: 1, headcount_band: 500-10k, public: true, domain: samsara.com, hq: "San Francisco, CA"}
+  - {name: Affirm, ats: greenhouse, ats_slug: affirm, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: affirm.com, hq: "San Francisco, CA"}
+  - {name: Brex, ats: greenhouse, ats_slug: brex, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: brex.com, hq: "San Francisco, CA"}
+  - {name: Chime, ats: greenhouse, ats_slug: chime, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: chime.com, hq: "San Francisco, CA"}
+  - {name: Gusto, ats: greenhouse, ats_slug: gusto, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: gusto.com, hq: "San Francisco, CA"}
+  - {name: Ramp, ats: ashby, ats_slug: ramp, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: ramp.com, hq: "New York, NY"}
+  - {name: Plaid, ats: greenhouse, ats_slug: plaid, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: plaid.com, hq: "San Francisco, CA"}
+  - {name: Flexport, ats: greenhouse, ats_slug: flexport, category: logistics, tier_seed: 2, headcount_band: 500-10k, public: false, domain: flexport.com, hq: "San Francisco, CA"}
+  - {name: Vercel, ats: greenhouse, ats_slug: vercel, category: infra, tier_seed: 3, headcount_band: <500, public: false, domain: vercel.com, hq: "San Francisco, CA"}
+  - {name: Supabase, ats: ashby, ats_slug: supabase, category: infra, tier_seed: 3, headcount_band: <500, public: false, domain: supabase.com, hq: "Remote"}
+  - {name: Linear, ats: ashby, ats_slug: linear, category: saas, tier_seed: 3, headcount_band: <500, public: false, domain: linear.app, hq: "Remote"}
+  - {name: Retool, ats: greenhouse, ats_slug: retool, category: saas, tier_seed: 3, headcount_band: <500, public: false, domain: retool.com, hq: "San Francisco, CA"}
+  - {name: Airtable, ats: greenhouse, ats_slug: airtable, category: saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: airtable.com, hq: "San Francisco, CA"}
+  - {name: Asana, ats: greenhouse, ats_slug: asana, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: asana.com, hq: "San Francisco, CA"}
+  - {name: Amplitude, ats: greenhouse, ats_slug: amplitude, category: saas, tier_seed: 2, headcount_band: 500-10k, public: true, domain: amplitude.com, hq: "San Francisco, CA"}
+  - {name: Braze, ats: greenhouse, ats_slug: braze, category: saas, tier_seed: 2, headcount_band: 500-10k, public: true, domain: braze.com, hq: "New York, NY"}
+  - {name: Sprinklr, ats: greenhouse, ats_slug: sprinklr, category: saas, tier_seed: 2, headcount_band: 500-10k, public: true, domain: sprinklr.com, hq: "New York, NY"}
+  - {name: Toast, ats: greenhouse, ats_slug: toast, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: toasttab.com, hq: "Boston, MA"}
+  - {name: HubSpot, ats: greenhouse, ats_slug: hubspot, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: hubspot.com, hq: "Cambridge, MA"}
+  - {name: Wayfair, ats: greenhouse, ats_slug: wayfair, category: ecommerce, tier_seed: 1, headcount_band: 10k+, public: true, domain: wayfair.com, hq: "Boston, MA"}
+  - {name: Klaviyo, ats: greenhouse, ats_slug: klaviyo, category: saas, tier_seed: 2, headcount_band: 500-10k, public: true, domain: klaviyo.com, hq: "Boston, MA"}
+  - {name: DraftKings, ats: greenhouse, ats_slug: draftkings, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: draftkings.com, hq: "Boston, MA"}
+  - {name: Chewy, ats: greenhouse, ats_slug: chewy, category: ecommerce, tier_seed: 1, headcount_band: 10k+, public: true, domain: chewy.com, hq: "Plantation, FL"}
+  - {name: Zillow, ats: greenhouse, ats_slug: zillow, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: zillow.com, hq: "Seattle, WA"}
+  - {name: Redfin, ats: greenhouse, ats_slug: redfin, category: consumer, tier_seed: 2, headcount_band: 500-10k, public: true, domain: redfin.com, hq: "Seattle, WA"}
+  - {name: Expedia Group, ats: workday, ats_slug: expedia.wd5/search, category: consumer, tier_seed: 1, headcount_band: 10k+, public: true, domain: expediagroup.com, hq: "Seattle, WA"}
+  - {name: Zoom, ats: workday, ats_slug: zoom.wd5/Zoom, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: zoom.com, hq: "San Jose, CA"}
+  - {name: Atlassian, ats: lever, ats_slug: atlassian, category: saas, tier_seed: 1, headcount_band: 10k+, public: true, domain: atlassian.com, hq: "Sydney / San Francisco"}
+  - {name: Block, ats: smartrecruiters, ats_slug: Block, category: fintech, tier_seed: 1, headcount_band: 10k+, public: true, domain: block.xyz, hq: "San Francisco, CA"}
+  - {name: Visa, ats: smartrecruiters, ats_slug: Visa, category: fintech, tier_seed: 1, headcount_band: 10k+, public: true, domain: visa.com, hq: "San Francisco, CA"}
+  - {name: Bosch, ats: smartrecruiters, ats_slug: BoschGroup, category: industrial, tier_seed: 1, headcount_band: 10k+, public: false, domain: bosch.com, hq: "Farmington Hills, MI"}
+  - {name: Twitch, ats: greenhouse, ats_slug: twitch, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: false, domain: twitch.tv, hq: "San Francisco, CA"}
+  - {name: Roblox, ats: greenhouse, ats_slug: roblox, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: roblox.com, hq: "San Mateo, CA"}
+  - {name: Unity, ats: greenhouse, ats_slug: unity3d, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: unity.com, hq: "San Francisco, CA"}
+  - {name: Epic Games, ats: greenhouse, ats_slug: epicgames, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: false, domain: epicgames.com, hq: "Cary, NC"}
+  - {name: Riot Games, ats: greenhouse, ats_slug: riotgames, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: false, domain: riotgames.com, hq: "Los Angeles, CA"}
+  - {name: Niantic, ats: greenhouse, ats_slug: niantic, category: consumer, tier_seed: 2, headcount_band: 500-10k, public: false, domain: nianticlabs.com, hq: "San Francisco, CA"}
+  - {name: Snap, ats: workday, ats_slug: snap.wd1/Snap, category: big_tech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: snap.com, hq: "Santa Monica, CA"}
+  - {name: Yelp, ats: greenhouse, ats_slug: yelp, category: consumer, tier_seed: 1, headcount_band: 500-10k, public: true, domain: yelp.com, hq: "San Francisco, CA"}
+  - {name: Box, ats: greenhouse, ats_slug: box, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: box.com, hq: "Redwood City, CA"}
+  - {name: DocuSign, ats: greenhouse, ats_slug: docusign, category: saas, tier_seed: 1, headcount_band: 500-10k, public: true, domain: docusign.com, hq: "San Francisco, CA"}
+  - {name: Nutanix, ats: greenhouse, ats_slug: nutanix, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: nutanix.com, hq: "San Jose, CA"}
+  - {name: Pure Storage, ats: greenhouse, ats_slug: purestorage, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: purestorage.com, hq: "Santa Clara, CA"}
+  - {name: Splunk, ats: greenhouse, ats_slug: splunk, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: splunk.com, hq: "San Francisco, CA"}
+  - {name: Zscaler, ats: smartrecruiters, ats_slug: Zscaler, category: security, tier_seed: 1, headcount_band: 500-10k, public: true, domain: zscaler.com, hq: "San Jose, CA"}
+  - {name: CrowdStrike, ats: greenhouse, ats_slug: crowdstrike, category: security, tier_seed: 1, headcount_band: 500-10k, public: true, domain: crowdstrike.com, hq: "Austin, TX"}
+  - {name: SentinelOne, ats: greenhouse, ats_slug: sentinelone, category: security, tier_seed: 1, headcount_band: 500-10k, public: true, domain: sentinelone.com, hq: "Mountain View, CA"}
+  - {name: Palo Alto Networks, ats: smartrecruiters, ats_slug: PaloAltoNetworks2, category: security, tier_seed: 1, headcount_band: 10k+, public: true, domain: paloaltonetworks.com, hq: "Santa Clara, CA"}
+  - {name: Rubrik, ats: greenhouse, ats_slug: rubrik, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: rubrik.com, hq: "Palo Alto, CA"}
+  - {name: Cohesity, ats: greenhouse, ats_slug: cohesity, category: infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: cohesity.com, hq: "San Jose, CA"}
+  - {name: Wiz, ats: greenhouse, ats_slug: wizinc, category: security, tier_seed: 2, headcount_band: 500-10k, public: false, domain: wiz.io, hq: "New York, NY"}
+  - {name: Abnormal Security, ats: greenhouse, ats_slug: abnormalsecurity, category: security, tier_seed: 2, headcount_band: 500-10k, public: false, domain: abnormalsecurity.com, hq: "San Francisco, CA"}
+
+  # ── Quant / finance ─────────────────────────────────────────────────────
+  - {name: Two Sigma, ats: greenhouse, ats_slug: twosigma, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: twosigma.com, hq: "New York, NY"}
+  - {name: Hudson River Trading, ats: greenhouse, ats_slug: wehrtyou, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: hudsonrivertrading.com, hq: "New York, NY"}
+  - {name: Jump Trading, ats: greenhouse, ats_slug: jumptrading, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: jumptrading.com, hq: "Chicago, IL"}
+  - {name: DRW, ats: greenhouse, ats_slug: drweng, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: drw.com, hq: "Chicago, IL"}
+  - {name: IMC Trading, ats: greenhouse, ats_slug: imc, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: imc.com, hq: "Chicago, IL"}
+  - {name: Point72, ats: greenhouse, ats_slug: point72, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: point72.com, hq: "Stamford, CT"}
+  - {name: Citadel, ats: greenhouse, ats_slug: citadel, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: citadel.com, hq: "Miami, FL"}
+  - {name: Citadel Securities, ats: greenhouse, ats_slug: citadelsecurities, category: quant, tier_seed: 1, headcount_band: 500-10k, public: false, domain: citadelsecurities.com, hq: "Miami, FL"}
+  - {name: Akuna Capital, ats: greenhouse, ats_slug: akunacapital, category: quant, tier_seed: 2, headcount_band: 500-10k, public: false, domain: akunacapital.com, hq: "Chicago, IL"}
+  - {name: Five Rings, ats: greenhouse, ats_slug: fiverings, category: quant, tier_seed: 2, headcount_band: <500, public: false, domain: fiverings.com, hq: "New York, NY"}
+  - {name: Virtu Financial, ats: greenhouse, ats_slug: virtu, category: quant, tier_seed: 1, headcount_band: 500-10k, public: true, domain: virtu.com, hq: "New York, NY"}
+  - {name: Capital One, ats: workday, ats_slug: capitalone.wd12/Capital_One, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: capitalone.com, hq: "McLean, VA"}
+  - {name: JPMorgan Chase, ats: workday, ats_slug: jpmc.wd5/JPMorgan_Chase, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: jpmorganchase.com, hq: "New York, NY"}
+  - {name: Goldman Sachs, ats: workday, ats_slug: goldmansachs.wd5/GSCareers, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: goldmansachs.com, hq: "New York, NY"}
+  - {name: Morgan Stanley, ats: workday, ats_slug: ms.wd5/External, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: morganstanley.com, hq: "New York, NY"}
+  - {name: American Express, ats: workday, ats_slug: aexp.wd1/amex, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: americanexpress.com, hq: "New York, NY"}
+  - {name: Bloomberg, ats: workday, ats_slug: bloomberg.wd1/Bloomberg, category: finance, tier_seed: 1, headcount_band: 10k+, public: false, domain: bloomberg.com, hq: "New York, NY"}
+  - {name: Fidelity Investments, ats: workday, ats_slug: fmr.wd1/Fidelity, category: finance, tier_seed: 1, headcount_band: 10k+, public: false, domain: fidelity.com, hq: "Boston, MA"}
+  - {name: Mastercard, ats: workday, ats_slug: mastercard.wd1/CorporateCareers, category: fintech, tier_seed: 1, headcount_band: 10k+, public: true, domain: mastercard.com, hq: "Purchase, NY"}
+  - {name: SoFi, ats: greenhouse, ats_slug: sofi, category: fintech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: sofi.com, hq: "San Francisco, CA"}
+  - {name: Marqeta, ats: greenhouse, ats_slug: marqeta, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: marqeta.com, hq: "Oakland, CA"}
+  - {name: Upstart, ats: greenhouse, ats_slug: upstart, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: upstart.com, hq: "San Mateo, CA"}
+  - {name: Betterment, ats: greenhouse, ats_slug: betterment, category: fintech, tier_seed: 3, headcount_band: <500, public: false, domain: betterment.com, hq: "New York, NY"}
+  - {name: Carta, ats: greenhouse, ats_slug: carta, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: carta.com, hq: "San Francisco, CA"}
+  - {name: Mercury, ats: greenhouse, ats_slug: mercury, category: fintech, tier_seed: 3, headcount_band: <500, public: false, domain: mercury.com, hq: "San Francisco, CA"}
+
+  # ── Healthtech / biotech ────────────────────────────────────────────────
+  - {name: Tempus, ats: greenhouse, ats_slug: tempus, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: tempus.com, hq: "Chicago, IL"}
+  - {name: Flatiron Health, ats: greenhouse, ats_slug: flatironhealth, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: flatiron.com, hq: "New York, NY"}
+  - {name: Oscar Health, ats: greenhouse, ats_slug: oscarhealth, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: hioscar.com, hq: "New York, NY"}
+  - {name: Hinge Health, ats: greenhouse, ats_slug: hingehealth, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: hingehealth.com, hq: "San Francisco, CA"}
+  - {name: Color Health, ats: greenhouse, ats_slug: color, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: color.com, hq: "Burlingame, CA"}
+  - {name: Komodo Health, ats: greenhouse, ats_slug: komodohealth, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: komodohealth.com, hq: "San Francisco, CA"}
+  - {name: Cityblock Health, ats: greenhouse, ats_slug: cityblockhealth, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: cityblock.com, hq: "Brooklyn, NY"}
+  - {name: Ro, ats: greenhouse, ats_slug: ro, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: ro.co, hq: "New York, NY"}
+  - {name: Zocdoc, ats: greenhouse, ats_slug: zocdoc, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: zocdoc.com, hq: "New York, NY"}
+  - {name: Veeva Systems, ats: lever, ats_slug: veeva, category: healthtech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: veeva.com, hq: "Pleasanton, CA"}
+  - {name: Insitro, ats: greenhouse, ats_slug: insitro, category: biotech, tier_seed: 3, headcount_band: <500, public: false, domain: insitro.com, hq: "South San Francisco, CA"}
+  - {name: Recursion, ats: greenhouse, ats_slug: recursionpharmaceuticals, category: biotech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: recursion.com, hq: "Salt Lake City, UT"}
+  - {name: Genentech, ats: workday, ats_slug: roche.wd3/roche-ext, category: biotech, tier_seed: 1, headcount_band: 10k+, public: true, domain: gene.com, hq: "South San Francisco, CA"}
+  - {name: Illumina, ats: workday, ats_slug: illumina.wd1/illumina-careers, category: biotech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: illumina.com, hq: "San Diego, CA"}
+  - {name: GRAIL, ats: greenhouse, ats_slug: grail, category: biotech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: grail.com, hq: "Menlo Park, CA"}
+  - {name: Verily, ats: greenhouse, ats_slug: verily, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: verily.com, hq: "South San Francisco, CA"}
+  - {name: Medtronic, ats: workday, ats_slug: medtronic.wd1/MedtronicCareers, category: medtech, tier_seed: 1, headcount_band: 10k+, public: true, domain: medtronic.com, hq: "Minneapolis, MN"}
+  - {name: Intuitive Surgical, ats: workday, ats_slug: isrg.wd5/ISRG, category: medtech, tier_seed: 1, headcount_band: 10k+, public: true, domain: intuitive.com, hq: "Sunnyvale, CA"}
+
+  # ── Robotics / autonomy / hardware ──────────────────────────────────────
+  - {name: Waymo, ats: greenhouse, ats_slug: waymo, category: autonomy, tier_seed: 1, headcount_band: 500-10k, public: false, domain: waymo.com, hq: "Mountain View, CA"}
+  - {name: Zoox, ats: greenhouse, ats_slug: zoox, category: autonomy, tier_seed: 1, headcount_band: 500-10k, public: false, domain: zoox.com, hq: "Foster City, CA"}
+  - {name: Nuro, ats: greenhouse, ats_slug: nuro, category: autonomy, tier_seed: 2, headcount_band: 500-10k, public: false, domain: nuro.ai, hq: "Mountain View, CA"}
+  - {name: Aurora, ats: greenhouse, ats_slug: aurora, category: autonomy, tier_seed: 2, headcount_band: 500-10k, public: true, domain: aurora.tech, hq: "Pittsburgh, PA"}
+  - {name: Applied Intuition, ats: greenhouse, ats_slug: appliedintuition, category: autonomy, tier_seed: 2, headcount_band: 500-10k, public: false, domain: appliedintuition.com, hq: "Mountain View, CA"}
+  - {name: Skydio, ats: greenhouse, ats_slug: skydio, category: robotics, tier_seed: 2, headcount_band: 500-10k, public: false, domain: skydio.com, hq: "San Mateo, CA"}
+  - {name: Figure AI, ats: greenhouse, ats_slug: figureai, category: robotics, tier_seed: 3, headcount_band: <500, public: false, domain: figure.ai, hq: "Sunnyvale, CA"}
+  - {name: Physical Intelligence, ats: ashby, ats_slug: physicalintelligence, category: robotics, tier_seed: 3, headcount_band: <500, public: false, domain: physicalintelligence.company, hq: "San Francisco, CA"}
+  - {name: Covariant, ats: greenhouse, ats_slug: covariant, category: robotics, tier_seed: 3, headcount_band: <500, public: false, domain: covariant.ai, hq: "Emeryville, CA"}
+  - {name: Dexterity, ats: greenhouse, ats_slug: dexterity, category: robotics, tier_seed: 3, headcount_band: <500, public: false, domain: dexterity.ai, hq: "Redwood City, CA"}
+  - {name: Symbotic, ats: greenhouse, ats_slug: symbotic, category: robotics, tier_seed: 2, headcount_band: 500-10k, public: true, domain: symbotic.com, hq: "Wilmington, MA"}
+  - {name: Motional, ats: greenhouse, ats_slug: motional, category: autonomy, tier_seed: 2, headcount_band: 500-10k, public: false, domain: motional.com, hq: "Boston, MA"}
+  - {name: Kodiak Robotics, ats: greenhouse, ats_slug: kodiakrobotics, category: autonomy, tier_seed: 3, headcount_band: <500, public: false, domain: kodiak.ai, hq: "Mountain View, CA"}
+  - {name: Rivian, ats: greenhouse, ats_slug: rivian, category: automotive, tier_seed: 1, headcount_band: 10k+, public: true, domain: rivian.com, hq: "Irvine, CA"}
+  - {name: Lucid Motors, ats: greenhouse, ats_slug: lucidmotors, category: automotive, tier_seed: 1, headcount_band: 500-10k, public: true, domain: lucidmotors.com, hq: "Newark, CA"}
+  - {name: Tesla, ats: greenhouse, ats_slug: tesla, category: automotive, tier_seed: 1, headcount_band: 10k+, public: true, domain: tesla.com, hq: "Austin, TX"}
+  - {name: SpaceX, ats: greenhouse, ats_slug: spacex, category: aerospace, tier_seed: 1, headcount_band: 10k+, public: false, domain: spacex.com, hq: "Hawthorne, CA"}
+  - {name: Relativity Space, ats: greenhouse, ats_slug: relativity, category: aerospace, tier_seed: 3, headcount_band: <500, public: false, domain: relativityspace.com, hq: "Long Beach, CA"}
+  - {name: Planet Labs, ats: greenhouse, ats_slug: planetlabs, category: aerospace, tier_seed: 2, headcount_band: 500-10k, public: true, domain: planet.com, hq: "San Francisco, CA"}
+  - {name: Cruise, ats: greenhouse, ats_slug: cruise, category: autonomy, tier_seed: 2, headcount_band: 500-10k, public: false, domain: getcruise.com, hq: "San Francisco, CA"}
+  - {name: Boston Dynamics, ats: greenhouse, ats_slug: bostondynamics, category: robotics, tier_seed: 2, headcount_band: 500-10k, public: false, domain: bostondynamics.com, hq: "Waltham, MA"}
+  - {name: Agility Robotics, ats: greenhouse, ats_slug: agilityrobotics, category: robotics, tier_seed: 3, headcount_band: <500, public: false, domain: agilityrobotics.com, hq: "Salem, OR"}
+  - {name: Cognex, ats: workday, ats_slug: cognex.wd1/Cognex, category: robotics, tier_seed: 2, headcount_band: 500-10k, public: true, domain: cognex.com, hq: "Natick, MA"}
+
+  # ── Defense-adjacent / gov contractors / national labs ─────────────────
+  - {name: Anduril, ats: greenhouse, ats_slug: andurilindustries, category: defense, tier_seed: 1, headcount_band: 500-10k, public: false, domain: anduril.com, hq: "Costa Mesa, CA"}
+  - {name: Shield AI, ats: greenhouse, ats_slug: shieldai, category: defense, tier_seed: 2, headcount_band: 500-10k, public: false, domain: shield.ai, hq: "San Diego, CA"}
+  - {name: Saronic, ats: greenhouse, ats_slug: saronic, category: defense, tier_seed: 3, headcount_band: <500, public: false, domain: saronic.com, hq: "Austin, TX"}
+  - {name: Epirus, ats: greenhouse, ats_slug: epirusinc, category: defense, tier_seed: 3, headcount_band: <500, public: false, domain: epirusinc.com, hq: "Torrance, CA"}
+  - {name: Rebellion Defense, ats: greenhouse, ats_slug: rebelliondefense, category: defense, tier_seed: 3, headcount_band: <500, public: false, domain: rebelliondefense.com, hq: "Washington, DC"}
+  - {name: Lockheed Martin, ats: workday, ats_slug: lockheedmartin.wd5/Lockheed_Martin_Careers, category: defense, tier_seed: 1, headcount_band: 10k+, public: true, domain: lockheedmartin.com, hq: "Bethesda, MD"}
+  - {name: Northrop Grumman, ats: workday, ats_slug: ngc.wd1/Northrop_Grumman_External_Site, category: defense, tier_seed: 1, headcount_band: 10k+, public: true, domain: northropgrumman.com, hq: "Falls Church, VA"}
+  - {name: RTX (Raytheon), ats: workday, ats_slug: rtx.wd5/RTX, category: defense, tier_seed: 1, headcount_band: 10k+, public: true, domain: rtx.com, hq: "Arlington, VA"}
+  - {name: Boeing, ats: workday, ats_slug: boeing.wd1/EXTERNAL_CAREERS, category: aerospace, tier_seed: 1, headcount_band: 10k+, public: true, domain: boeing.com, hq: "Arlington, VA"}
+  - {name: General Dynamics IT, ats: workday, ats_slug: gdit.wd5/External_Career_Site, category: defense, tier_seed: 1, headcount_band: 10k+, public: true, domain: gdit.com, hq: "Falls Church, VA"}
+  - {name: Leidos, ats: workday, ats_slug: leidos.wd5/External, category: defense, tier_seed: 1, headcount_band: 10k+, public: true, domain: leidos.com, hq: "Reston, VA"}
+  - {name: Booz Allen Hamilton, ats: workday, ats_slug: bah.wd1/BAH_Jobs, category: consulting, tier_seed: 1, headcount_band: 10k+, public: true, domain: boozallen.com, hq: "McLean, VA"}
+  - {name: MITRE, ats: workday, ats_slug: mitre.wd5/MITRE, category: research_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: mitre.org, hq: "Bedford, MA"}
+  - {name: Johns Hopkins APL, ats: workday, ats_slug: jhuapl.wd5/jhuapl, category: research_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: jhuapl.edu, hq: "Laurel, MD"}
+  - {name: Lawrence Livermore National Lab, ats: workday, ats_slug: llnl.wd5/LLNL_Careers, category: research_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: llnl.gov, hq: "Livermore, CA"}
+  - {name: Argonne National Lab, ats: workday, ats_slug: anl.wd1/Argonne_Careers, category: research_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: anl.gov, hq: "Lemont, IL"}
+  - {name: Oak Ridge National Lab, ats: workday, ats_slug: ornl.wd5/ORNL_Careers, category: research_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: ornl.gov, hq: "Oak Ridge, TN"}
+  - {name: Sandia National Labs, ats: workday, ats_slug: sandia.wd1/Sandia_Careers, category: research_lab, tier_seed: 2, headcount_band: 10k+, public: false, domain: sandia.gov, hq: "Albuquerque, NM"}
+  - {name: Allen Institute for AI, ats: greenhouse, ats_slug: thealleninstitute, category: research_lab, tier_seed: 2, headcount_band: <500, public: false, domain: allenai.org, hq: "Seattle, WA"}
+  - {name: Toyota Research Institute, ats: greenhouse, ats_slug: toyotaresearchinstitute, category: research_lab, tier_seed: 2, headcount_band: <500, public: false, domain: tri.global, hq: "Los Altos, CA"}
+  - {name: SRI International, ats: workday, ats_slug: sri.wd5/SRI, category: research_lab, tier_seed: 2, headcount_band: 500-10k, public: false, domain: sri.com, hq: "Menlo Park, CA"}
+
+  # ── Enterprise / industrial / consulting with real ML teams ────────────
+  - {name: Deloitte, ats: workday, ats_slug: deloitte.wd1/DeloitteUS, category: consulting, tier_seed: 1, headcount_band: 10k+, public: false, domain: deloitte.com, hq: "New York, NY"}
+  - {name: Accenture, ats: workday, ats_slug: accenture.wd103/AccentureCareers, category: consulting, tier_seed: 1, headcount_band: 10k+, public: true, domain: accenture.com, hq: "Dublin / Chicago"}
+  - {name: IBM, ats: workday, ats_slug: ibm.wd5/IBM_Careers, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: ibm.com, hq: "Armonk, NY"}
+  - {name: Oracle, ats: workday, ats_slug: oracle.wd5/Oracle_Careers, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: oracle.com, hq: "Austin, TX"}
+  - {name: SAP, ats: workday, ats_slug: sap.wd3/SAPCareers, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: sap.com, hq: "Newtown Square, PA"}
+  - {name: Autodesk, ats: workday, ats_slug: autodesk.wd1/Ext, category: saas, tier_seed: 1, headcount_band: 10k+, public: true, domain: autodesk.com, hq: "San Francisco, CA"}
+  - {name: Walmart Global Tech, ats: workday, ats_slug: walmart.wd5/WalmartExternal, category: retail, tier_seed: 1, headcount_band: 10k+, public: true, domain: walmart.com, hq: "Bentonville, AR"}
+  - {name: Target, ats: workday, ats_slug: target.wd5/targetcareers, category: retail, tier_seed: 1, headcount_band: 10k+, public: true, domain: target.com, hq: "Minneapolis, MN"}
+  - {name: The Home Depot, ats: workday, ats_slug: homedepot.wd5/CareerDepot, category: retail, tier_seed: 1, headcount_band: 10k+, public: true, domain: homedepot.com, hq: "Atlanta, GA"}
+  - {name: Nike, ats: workday, ats_slug: nike.wd1/nikecareers, category: consumer, tier_seed: 1, headcount_band: 10k+, public: true, domain: nike.com, hq: "Beaverton, OR"}
+  - {name: Disney, ats: workday, ats_slug: disney.wd5/disneycareer, category: media, tier_seed: 1, headcount_band: 10k+, public: true, domain: disney.com, hq: "Burbank, CA"}
+  - {name: Warner Bros. Discovery, ats: workday, ats_slug: warnerbros.wd5/global, category: media, tier_seed: 1, headcount_band: 10k+, public: true, domain: wbd.com, hq: "New York, NY"}
+  - {name: Comcast, ats: workday, ats_slug: comcast.wd5/Comcast_Careers, category: media, tier_seed: 1, headcount_band: 10k+, public: true, domain: comcast.com, hq: "Philadelphia, PA"}
+  - {name: The New York Times, ats: greenhouse, ats_slug: thenewyorktimes, category: media, tier_seed: 1, headcount_band: 500-10k, public: true, domain: nytimes.com, hq: "New York, NY"}
+  - {name: John Deere, ats: workday, ats_slug: deere.wd5/deere, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: deere.com, hq: "Moline, IL"}
+  - {name: Caterpillar, ats: workday, ats_slug: cat.wd5/CaterpillarCareers, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: caterpillar.com, hq: "Irving, TX"}
+  - {name: GE Aerospace, ats: workday, ats_slug: ge.wd5/GE_ExternalSite, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: geaerospace.com, hq: "Evendale, OH"}
+  - {name: Honeywell, ats: workday, ats_slug: honeywell.wd5/Honeywell, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: honeywell.com, hq: "Charlotte, NC"}
+  - {name: Ford, ats: workday, ats_slug: efds.wd1/ford, category: automotive, tier_seed: 1, headcount_band: 10k+, public: true, domain: ford.com, hq: "Dearborn, MI"}
+  - {name: General Motors, ats: workday, ats_slug: generalmotors.wd5/Careers_GM, category: automotive, tier_seed: 1, headcount_band: 10k+, public: true, domain: gm.com, hq: "Detroit, MI"}
+  - {name: Cummins, ats: workday, ats_slug: cummins.wd1/Cummins, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: cummins.com, hq: "Columbus, IN"}
+  - {name: Schneider Electric, ats: workday, ats_slug: schneider.wd3/SE_External, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: se.com, hq: "Boston, MA"}
+  - {name: Siemens (US), ats: workday, ats_slug: siemens.wd3/External, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: siemens.com, hq: "Washington, DC"}
+  - {name: Motorola Solutions, ats: workday, ats_slug: motorolasolutions.wd5/Careers, category: industrial, tier_seed: 1, headcount_band: 10k+, public: true, domain: motorolasolutions.com, hq: "Chicago, IL"}
+  - {name: Garmin, ats: workday, ats_slug: garmin.wd5/Garmin, category: consumer, tier_seed: 1, headcount_band: 10k+, public: true, domain: garmin.com, hq: "Olathe, KS"}
+  - {name: Analog Devices, ats: workday, ats_slug: analogdevices.wd1/External, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: analog.com, hq: "Wilmington, MA"}
+  - {name: Texas Instruments, ats: workday, ats_slug: ti.wd1/TI_Careers, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: ti.com, hq: "Dallas, TX"}
+  - {name: Micron, ats: workday, ats_slug: micron.wd1/External, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: micron.com, hq: "Boise, ID"}
+  - {name: Marvell, ats: workday, ats_slug: marvell.wd1/External, category: semis, tier_seed: 1, headcount_band: 500-10k, public: true, domain: marvell.com, hq: "Santa Clara, CA"}
+  - {name: Arm (US), ats: workday, ats_slug: arm.wd3/ArmCareers, category: semis, tier_seed: 1, headcount_band: 500-10k, public: true, domain: arm.com, hq: "Austin, TX"}
+  - {name: Lam Research, ats: workday, ats_slug: lamresearch.wd1/LamResearchCareers, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: lamresearch.com, hq: "Fremont, CA"}
+  - {name: Applied Materials, ats: workday, ats_slug: amat.wd1/External, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: appliedmaterials.com, hq: "Santa Clara, CA"}
+  - {name: KLA, ats: workday, ats_slug: kla.wd1/Search, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: kla.com, hq: "Milpitas, CA"}
+  - {name: Western Digital, ats: workday, ats_slug: wdc.wd1/WDCareers, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: westerndigital.com, hq: "San Jose, CA"}
+  - {name: Seagate, ats: workday, ats_slug: seagate.wd1/Seagate, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: seagate.com, hq: "Fremont, CA"}
+  - {name: HP, ats: workday, ats_slug: hp.wd5/ExternalCareerSite, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: hp.com, hq: "Palo Alto, CA"}
+  - {name: Hewlett Packard Enterprise, ats: workday, ats_slug: hpe.wd5/Jobsathpe, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: hpe.com, hq: "Spring, TX"}
+  - {name: VMware (Broadcom), ats: workday, ats_slug: broadcom.wd1/External, category: big_tech, tier_seed: 1, headcount_band: 10k+, public: true, domain: broadcom.com, hq: "Palo Alto, CA"}
+  - {name: Juniper Networks, ats: workday, ats_slug: juniper.wd5/Juniper_Networks_Careers, category: infra, tier_seed: 1, headcount_band: 10k+, public: true, domain: juniper.net, hq: "Sunnyvale, CA"}
+  - {name: Arista Networks, ats: greenhouse, ats_slug: aristanetworks, category: infra, tier_seed: 1, headcount_band: 500-10k, public: true, domain: arista.com, hq: "Santa Clara, CA"}
+  - {name: Fortinet, ats: workday, ats_slug: fortinet.wd1/Fortinet_Careers, category: security, tier_seed: 1, headcount_band: 10k+, public: true, domain: fortinet.com, hq: "Sunnyvale, CA"}
+  - {name: Akamai, ats: workday, ats_slug: akamai.wd1/External, category: infra, tier_seed: 1, headcount_band: 10k+, public: true, domain: akamai.com, hq: "Cambridge, MA"}
+  - {name: Cadence, ats: workday, ats_slug: cadence.wd1/External_Careers, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: cadence.com, hq: "San Jose, CA"}
+  - {name: Synopsys, ats: workday, ats_slug: synopsys.wd1/careers, category: semis, tier_seed: 1, headcount_band: 10k+, public: true, domain: synopsys.com, hq: "Sunnyvale, CA"}
+  - {name: MathWorks, ats: workday, ats_slug: mathworks.wd1/MathWorks, category: software, tier_seed: 2, headcount_band: 500-10k, public: false, domain: mathworks.com, hq: "Natick, MA"}
+  - {name: Epic Systems, ats: workday, ats_slug: epic.wd5/Epic, category: healthtech, tier_seed: 2, headcount_band: 10k+, public: false, domain: epic.com, hq: "Verona, WI"}
+  - {name: Cerner (Oracle Health), ats: workday, ats_slug: oracle.wd5/Oracle_Health, category: healthtech, tier_seed: 1, headcount_band: 10k+, public: true, domain: oracle.com, hq: "Kansas City, MO"}
+  - {name: UnitedHealth Group / Optum, ats: workday, ats_slug: uhg.wd1/External_Career_Site, category: healthtech, tier_seed: 1, headcount_band: 10k+, public: true, domain: unitedhealthgroup.com, hq: "Minnetonka, MN"}
+  - {name: CVS Health, ats: workday, ats_slug: cvshealth.wd1/CVS_Health_Careers, category: healthtech, tier_seed: 1, headcount_band: 10k+, public: true, domain: cvshealth.com, hq: "Woonsocket, RI"}
+  - {name: Humana, ats: workday, ats_slug: humana.wd5/Humana_External_Career_Site, category: healthtech, tier_seed: 1, headcount_band: 10k+, public: true, domain: humana.com, hq: "Louisville, KY"}
+  - {name: Mayo Clinic, ats: workday, ats_slug: mayo.wd5/Jobs, category: healthtech, tier_seed: 2, headcount_band: 10k+, public: false, domain: mayoclinic.org, hq: "Rochester, MN"}
+  - {name: Pfizer, ats: workday, ats_slug: pfizer.wd1/PfizerCareers, category: biotech, tier_seed: 1, headcount_band: 10k+, public: true, domain: pfizer.com, hq: "New York, NY"}
+  - {name: Johnson & Johnson, ats: workday, ats_slug: jnj.wd1/jnjcareers, category: biotech, tier_seed: 1, headcount_band: 10k+, public: true, domain: jnj.com, hq: "New Brunswick, NJ"}
+  - {name: Eli Lilly, ats: workday, ats_slug: lilly.wd5/LLY, category: biotech, tier_seed: 1, headcount_band: 10k+, public: true, domain: lilly.com, hq: "Indianapolis, IN"}
+  - {name: Amgen, ats: workday, ats_slug: amgen.wd1/Careers, category: biotech, tier_seed: 1, headcount_band: 10k+, public: true, domain: amgen.com, hq: "Thousand Oaks, CA"}
+  - {name: Moderna, ats: workday, ats_slug: modernatx.wd1/M_tx, category: biotech, tier_seed: 1, headcount_band: 500-10k, public: true, domain: modernatx.com, hq: "Cambridge, MA"}
+  - {name: Regeneron, ats: workday, ats_slug: regeneron.wd1/Regeneron, category: biotech, tier_seed: 1, headcount_band: 10k+, public: true, domain: regeneron.com, hq: "Tarrytown, NY"}
+  - {name: State Farm, ats: workday, ats_slug: statefarm.wd1/SFExternal, category: insurance, tier_seed: 1, headcount_band: 10k+, public: false, domain: statefarm.com, hq: "Bloomington, IL"}
+  - {name: Progressive, ats: workday, ats_slug: progressive.wd5/careers, category: insurance, tier_seed: 1, headcount_band: 10k+, public: true, domain: progressive.com, hq: "Mayfield Village, OH"}
+  - {name: Liberty Mutual, ats: workday, ats_slug: libertymutual.wd5/Careers, category: insurance, tier_seed: 1, headcount_band: 10k+, public: false, domain: libertymutual.com, hq: "Boston, MA"}
+  - {name: USAA, ats: workday, ats_slug: usaa.wd1/USAA, category: finance, tier_seed: 1, headcount_band: 10k+, public: false, domain: usaa.com, hq: "San Antonio, TX"}
+  - {name: Wells Fargo, ats: workday, ats_slug: wf.wd1/WellsFargoJobs, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: wellsfargo.com, hq: "San Francisco, CA"}
+  - {name: Bank of America, ats: workday, ats_slug: ghr.wd1/Lateral-US, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: bankofamerica.com, hq: "Charlotte, NC"}
+  - {name: Discover Financial, ats: workday, ats_slug: discover.wd5/Discover, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: discover.com, hq: "Riverwoods, IL"}
+  - {name: Synchrony, ats: workday, ats_slug: synchrony.wd5/Synchrony, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: synchrony.com, hq: "Stamford, CT"}
+  - {name: Vanguard, ats: workday, ats_slug: vanguard.wd5/vanguard_external, category: finance, tier_seed: 1, headcount_band: 10k+, public: false, domain: vanguard.com, hq: "Malvern, PA"}
+  - {name: BlackRock, ats: workday, ats_slug: blackrock.wd1/BlackRock_Professional, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: blackrock.com, hq: "New York, NY"}
+  - {name: S&P Global, ats: workday, ats_slug: spgi.wd5/SPGI_Careers, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: spglobal.com, hq: "New York, NY"}
+  - {name: Moody's, ats: workday, ats_slug: moodys.wd1/Moody_s_Careers, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: moodys.com, hq: "New York, NY"}
+  - {name: FactSet, ats: workday, ats_slug: factset.wd1/FactSetCareers, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: factset.com, hq: "Norwalk, CT"}
+  - {name: Nielsen, ats: workday, ats_slug: nielsen.wd1/Nielsen, category: analytics, tier_seed: 1, headcount_band: 10k+, public: false, domain: nielsen.com, hq: "New York, NY"}
+  - {name: Thomson Reuters, ats: workday, ats_slug: thomsonreuters.wd5/External, category: media, tier_seed: 1, headcount_band: 10k+, public: true, domain: thomsonreuters.com, hq: "Toronto / Eagan, MN"}
+  - {name: LexisNexis, ats: workday, ats_slug: relx.wd3/relx, category: media, tier_seed: 1, headcount_band: 10k+, public: true, domain: lexisnexis.com, hq: "New York, NY"}
+  - {name: Indeed, ats: workday, ats_slug: indeed.wd1/external, category: consumer, tier_seed: 1, headcount_band: 10k+, public: false, domain: indeed.com, hq: "Austin, TX"}
+  - {name: Chegg, ats: greenhouse, ats_slug: chegg, category: edtech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: chegg.com, hq: "Santa Clara, CA"}
+  - {name: Quizlet, ats: greenhouse, ats_slug: quizlet, category: edtech, tier_seed: 3, headcount_band: <500, public: false, domain: quizlet.com, hq: "San Francisco, CA"}
+  - {name: Khan Academy, ats: greenhouse, ats_slug: khanacademy, category: edtech, tier_seed: 3, headcount_band: <500, public: false, domain: khanacademy.org, hq: "Mountain View, CA"}
+  - {name: Course Hero (Learneo), ats: greenhouse, ats_slug: coursehero, category: edtech, tier_seed: 3, headcount_band: <500, public: false, domain: learneo.com, hq: "Redwood City, CA"}
+  - {name: Nerdwallet, ats: greenhouse, ats_slug: nerdwallet, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: true, domain: nerdwallet.com, hq: "San Francisco, CA"}
+  - {name: Credit Karma, ats: greenhouse, ats_slug: creditkarma, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: creditkarma.com, hq: "Oakland, CA"}
+  - {name: Opendoor, ats: greenhouse, ats_slug: opendoor, category: consumer, tier_seed: 2, headcount_band: 500-10k, public: true, domain: opendoor.com, hq: "Tempe, AZ"}
+  - {name: Faire, ats: greenhouse, ats_slug: faire, category: ecommerce, tier_seed: 2, headcount_band: 500-10k, public: false, domain: faire.com, hq: "San Francisco, CA"}
+  - {name: Whatnot, ats: greenhouse, ats_slug: whatnot, category: ecommerce, tier_seed: 3, headcount_band: <500, public: false, domain: whatnot.com, hq: "Los Angeles, CA"}
+  - {name: Thumbtack, ats: greenhouse, ats_slug: thumbtack, category: consumer, tier_seed: 3, headcount_band: <500, public: false, domain: thumbtack.com, hq: "San Francisco, CA"}
+  - {name: Strava, ats: greenhouse, ats_slug: strava, category: consumer, tier_seed: 3, headcount_band: <500, public: false, domain: strava.com, hq: "San Francisco, CA"}
+  - {name: Calm, ats: greenhouse, ats_slug: calm, category: consumer, tier_seed: 3, headcount_band: <500, public: false, domain: calm.com, hq: "San Francisco, CA"}
+  - {name: Headspace, ats: greenhouse, ats_slug: headspace, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: headspace.com, hq: "Santa Monica, CA"}
+  - {name: Lattice, ats: greenhouse, ats_slug: lattice, category: saas, tier_seed: 3, headcount_band: <500, public: false, domain: lattice.com, hq: "San Francisco, CA"}
+  - {name: Rippling, ats: greenhouse, ats_slug: rippling, category: saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: rippling.com, hq: "San Francisco, CA"}
+  - {name: Deel, ats: ashby, ats_slug: deel, category: saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: deel.com, hq: "San Francisco, CA"}
+  - {name: Navan, ats: greenhouse, ats_slug: navan, category: saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: navan.com, hq: "Palo Alto, CA"}
+  - {name: Checkr, ats: greenhouse, ats_slug: checkr, category: saas, tier_seed: 3, headcount_band: <500, public: false, domain: checkr.com, hq: "San Francisco, CA"}
+  - {name: Benchling, ats: greenhouse, ats_slug: benchling, category: biotech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: benchling.com, hq: "San Francisco, CA"}
+  - {name: Sift, ats: greenhouse, ats_slug: siftscience, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: sift.com, hq: "San Francisco, CA"}
+  - {name: Signifyd, ats: greenhouse, ats_slug: signifyd, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: signifyd.com, hq: "San Jose, CA"}
+  - {name: Forter, ats: greenhouse, ats_slug: forter, category: ai_saas, tier_seed: 3, headcount_band: <500, public: false, domain: forter.com, hq: "New York, NY"}
+  - {name: Dataminr, ats: greenhouse, ats_slug: dataminr, category: ai_saas, tier_seed: 2, headcount_band: 500-10k, public: false, domain: dataminr.com, hq: "New York, NY"}
+  - {name: C3 AI, ats: greenhouse, ats_slug: c3ai, category: ai_saas, tier_seed: 2, headcount_band: 500-10k, public: true, domain: c3.ai, hq: "Redwood City, CA"}
+  - {name: DataRobot, ats: greenhouse, ats_slug: datarobot, category: ai_infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: datarobot.com, hq: "Boston, MA"}
+  - {name: Domino Data Lab, ats: greenhouse, ats_slug: dominodatalab, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: domino.ai, hq: "San Francisco, CA"}
+  - {name: Tecton, ats: greenhouse, ats_slug: tecton, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: tecton.ai, hq: "San Francisco, CA"}
+  - {name: dbt Labs, ats: greenhouse, ats_slug: dbtlabsinc, category: data_infra, tier_seed: 3, headcount_band: <500, public: false, domain: getdbt.com, hq: "Philadelphia, PA"}
+  - {name: Fivetran, ats: greenhouse, ats_slug: fivetran, category: data_infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: fivetran.com, hq: "Oakland, CA"}
+  - {name: Airbyte, ats: greenhouse, ats_slug: airbyte, category: data_infra, tier_seed: 3, headcount_band: <500, public: false, domain: airbyte.com, hq: "San Francisco, CA"}
+  - {name: Starburst, ats: greenhouse, ats_slug: starburstdata, category: data_infra, tier_seed: 3, headcount_band: <500, public: false, domain: starburst.io, hq: "Boston, MA"}
+  - {name: ClickHouse, ats: greenhouse, ats_slug: clickhouse, category: data_infra, tier_seed: 3, headcount_band: <500, public: false, domain: clickhouse.com, hq: "San Francisco, CA"}
+  - {name: Redis, ats: greenhouse, ats_slug: redis, category: infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: redis.io, hq: "Mountain View, CA"}
+  - {name: Cockroach Labs, ats: greenhouse, ats_slug: cockroachlabs, category: infra, tier_seed: 3, headcount_band: <500, public: false, domain: cockroachlabs.com, hq: "New York, NY"}
+  - {name: PlanetScale, ats: greenhouse, ats_slug: planetscale, category: infra, tier_seed: 3, headcount_band: <500, public: false, domain: planetscale.com, hq: "San Francisco, CA"}
+  - {name: Temporal, ats: greenhouse, ats_slug: temporaltechnologies, category: infra, tier_seed: 3, headcount_band: <500, public: false, domain: temporal.io, hq: "Seattle, WA"}
+  - {name: Grafana Labs, ats: greenhouse, ats_slug: grafanalabs, category: infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: grafana.com, hq: "New York, NY"}
+  - {name: PagerDuty, ats: greenhouse, ats_slug: pagerduty, category: saas, tier_seed: 2, headcount_band: 500-10k, public: true, domain: pagerduty.com, hq: "San Francisco, CA"}
+  - {name: New Relic, ats: greenhouse, ats_slug: newrelic, category: infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: newrelic.com, hq: "San Francisco, CA"}
+  - {name: Sumo Logic, ats: greenhouse, ats_slug: sumologic, category: infra, tier_seed: 2, headcount_band: 500-10k, public: false, domain: sumologic.com, hq: "Redwood City, CA"}
+  - {name: Chainalysis, ats: greenhouse, ats_slug: chainalysis, category: fintech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: chainalysis.com, hq: "New York, NY"}
+  - {name: Gemini, ats: greenhouse, ats_slug: gemini, category: fintech, tier_seed: 3, headcount_band: <500, public: false, domain: gemini.com, hq: "New York, NY"}
+  - {name: Anchorage Digital, ats: greenhouse, ats_slug: anchorage, category: fintech, tier_seed: 3, headcount_band: <500, public: false, domain: anchorage.com, hq: "San Francisco, CA"}
+  - {name: Alchemy, ats: greenhouse, ats_slug: alchemy, category: infra, tier_seed: 3, headcount_band: <500, public: false, domain: alchemy.com, hq: "San Francisco, CA"}
+  - {name: Scale (Outlier), ats: greenhouse, ats_slug: outlier, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: outlier.ai, hq: "San Francisco, CA"}
+  - {name: Surge AI, ats: ashby, ats_slug: surge-ai, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: surgehq.ai, hq: "San Francisco, CA"}
+  - {name: Turing, ats: greenhouse, ats_slug: turing, category: ai_infra, tier_seed: 3, headcount_band: <500, public: false, domain: turing.com, hq: "Palo Alto, CA"}
+  - {name: Cerebral, ats: greenhouse, ats_slug: cerebral, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: cerebral.com, hq: "Remote"}
+  - {name: Included Health, ats: greenhouse, ats_slug: includedhealth, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: includedhealth.com, hq: "San Francisco, CA"}
+  - {name: Omada Health, ats: greenhouse, ats_slug: omadahealth, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: omadahealth.com, hq: "San Francisco, CA"}
+  - {name: Lyra Health, ats: greenhouse, ats_slug: lyrahealth, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: lyrahealth.com, hq: "Burlingame, CA"}
+  - {name: Devoted Health, ats: greenhouse, ats_slug: devotedhealth, category: healthtech, tier_seed: 2, headcount_band: 500-10k, public: false, domain: devoted.com, hq: "Waltham, MA"}
+  - {name: Truveta, ats: greenhouse, ats_slug: truveta, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: truveta.com, hq: "Bellevue, WA"}
+  - {name: PathAI, ats: greenhouse, ats_slug: pathai, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: pathai.com, hq: "Boston, MA"}
+  - {name: Viz.ai, ats: greenhouse, ats_slug: vizai, category: healthtech, tier_seed: 3, headcount_band: <500, public: false, domain: viz.ai, hq: "San Francisco, CA"}
+  - {name: Butterfly Network, ats: greenhouse, ats_slug: butterflynetwork, category: medtech, tier_seed: 3, headcount_band: <500, public: true, domain: butterflynetwork.com, hq: "Burlington, MA"}
+  - {name: Samsung Research America, ats: workday, ats_slug: sec.wd3/Samsung_Careers, category: research_lab, tier_seed: 1, headcount_band: 10k+, public: true, domain: sra.samsung.com, hq: "Mountain View, CA"}
+  - {name: Sony AI (US), ats: workday, ats_slug: sonyglobal.wd1/SonyGlobalCareers, category: research_lab, tier_seed: 1, headcount_band: 10k+, public: true, domain: ai.sony, hq: "New York, NY"}
+  - {name: Bosch Research (US), ats: smartrecruiters, ats_slug: BoschGroup, category: research_lab, tier_seed: 1, headcount_band: 10k+, public: false, domain: bosch.us, hq: "Sunnyvale, CA"}
+  - {name: Capital One Applied Research, ats: workday, ats_slug: capitalone.wd12/Capital_One, category: finance, tier_seed: 1, headcount_band: 10k+, public: true, domain: capitalone.com, hq: "McLean, VA"}

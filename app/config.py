@@ -26,6 +26,21 @@ class Settings(BaseSettings):
     vertical: str = "ai"
     vertical_config_dir: str = "config/vertical"
 
+    # Run `alembic upgrade head` automatically on startup / first request.
+    # Defaults to on when running on Vercel (no shell there to run it by hand).
+    auto_migrate: bool = False
+
+    # Ingestion (Milestone 1.2)
+    ingest_batch_size: int = 8          # companies per POST /api/discover invocation (serverless-safe)
+    ingest_stale_hours: int = 12        # re-fetch a company board after this many hours
+    cron_secret: str = ""               # Vercel cron sends "Authorization: Bearer <CRON_SECRET>"
+    # Aggregator API keys - a missing key means that source is skipped, never a crash
+    adzuna_app_id: str = ""
+    adzuna_app_key: str = ""
+    usajobs_api_key: str = ""
+    usajobs_email: str = ""
+    aggregators_enabled: str = "remotive,remoteok,adzuna,usajobs"  # comma-separated
+
     # Embeddings: auto | voyage | local | hashing  (see app/embeddings/provider.py)
     embedding_provider: str = "auto"
     voyage_api_key: str = ""
@@ -38,6 +53,8 @@ class Settings(BaseSettings):
         # DATABASE_URL the default relative SQLite path would crash on boot.
         if os.environ.get("VERCEL") and self.database_url == "sqlite:///./jobagent.db":
             self.database_url = "sqlite:////tmp/jobagent.db"
+        if os.environ.get("VERCEL") and "AUTO_MIGRATE" not in os.environ:
+            self.auto_migrate = True
         return self
 
 

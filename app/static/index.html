@@ -279,10 +279,16 @@ $("btn-discover").addEventListener("click", async () => {
   const b = $("btn-discover");
   b.disabled = true; b.textContent = "Discovering…";
   try {
-    const s = await (await api("/discover/run", {method: "POST"})).json();
-    toast(`Discovery: ${s.created} new, ${s.updated} updated` +
-          (s.errors.length ? `, ${s.errors.length} board error(s)` : ""));
-    if (s.errors.length) console.warn(s.errors);
+    let run;
+    do {
+      run = await (await api("/api/discover", {method: "POST"})).json();
+      b.textContent = `Discovering… ${run.processed_companies}/${run.total_companies} companies`;
+      toast(`Run #${run.id}: ${run.processed_companies}/${run.total_companies} companies · +${run.created} new · ${run.closed} closed`);
+    } while (run.status === "running");
+    const bad = run.errors.length;
+    toast(`Discovery done: ${run.created} new, ${run.updated} updated, ${run.closed} closed` +
+          (bad ? ` · ${bad} board(s) failed (see /api/runs/${run.id})` : ""));
+    if (bad) console.warn(run.errors);
     await loadJobs();
   } catch (err) {
     toast("Discovery failed: " + err.message, true);

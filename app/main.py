@@ -7,19 +7,27 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from app.api.ingest_routes import router as ingest_router
 from app.api.profile_routes import router as profile_router
 from app.api.routes import router
 from app.auth import ensure_owner, get_auth_provider
 from app.config import get_settings
-from app.db.session import get_session_factory, init_db
+from app.db.session import ensure_schema, get_session_factory, init_db
 from app.db.tenancy import current_user_id
 
 STATIC = Path(__file__).parent / "static"
 
 
+def _prepare_db() -> None:
+    if get_settings().auto_migrate:
+        ensure_schema()
+    else:
+        init_db()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    _prepare_db()
     db = get_session_factory()()
     try:
         ensure_owner(db)
@@ -53,6 +61,7 @@ app = FastAPI(title="jobagent", version="0.2.0", lifespan=lifespan)
 app.add_middleware(RestoreOriginalPath)
 app.include_router(router)
 app.include_router(profile_router)
+app.include_router(ingest_router)
 # check_dir=False: never crash the whole app if the bundle lacks the folder;
 # /health reports it instead.
 app.mount("/static", StaticFiles(directory=STATIC, check_dir=False), name="static")
@@ -62,6 +71,8 @@ app.mount("/static", StaticFiles(directory=STATIC, check_dir=False), name="stati
 async def auth_guard(request: Request, call_next):
     """Authenticate via the configured AuthProvider and scope the request to
     that user (tenancy contextvar -> Postgres RLS)."""
+    if get_settings().auto_migrate:
+        ensure_schema()  # no-op after the first call; covers runtimes that skip lifespan
     provider = get_auth_provider()
     uid = provider.authenticate(request)
     if uid is None:
