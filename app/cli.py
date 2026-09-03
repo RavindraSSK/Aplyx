@@ -39,8 +39,8 @@ def _run(args, db, user_id: int) -> int:
         if args.command == "match":
             from app.matching.service import run_matching
 
-            result = run_matching(db, rescore_all=args.all)
-            print(f"scored {result['scored']} job(s)")
+            result = run_matching(db, rescore_all=args.all, user_id=user_id)
+            print(f"scored {result['scored']} job(s) against {result['resume_source']}")
             return 0
 
         if args.command == "tailor":

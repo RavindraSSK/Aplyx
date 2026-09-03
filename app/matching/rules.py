@@ -27,10 +27,11 @@ def apply_rules(title: str, description: str, location: str, remote: bool, rules
         hits = [k for k in required if k in title_l]
         if not hits:
             result.passed = False
-            result.reasons.append(f"title lacks required keywords {required}")
+            shown = required if len(required) <= 8 else f"any of {len(required)} target-role titles"
+            result.reasons.append(f"title lacks required keywords: {shown}")
         else:
             result.bonus += 5.0
-            result.reasons.append(f"title matches keyword(s): {', '.join(hits)}")
+            result.reasons.append(f"title matches keyword(s): {', '.join(hits[:4])}")
 
     for kw in rules.get("excluded_keywords", []):
         kw_l = kw.lower()
