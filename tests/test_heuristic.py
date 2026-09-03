@@ -89,3 +89,19 @@ def test_non_credit_bad_request_still_raises():
 
     with pytest.raises(anthropic.BadRequestError):
         parse_with_fallback(RESUME, client=Bad())
+
+
+def test_name_skips_spaced_section_headers_and_bare_degree_mentions():
+    text = """S U M M A R Y
+Ravindra Medicharla
+ravi@example.com | (314) 555-0000
+M.S. in AI student passionate about ML.
+E D U C A T I O N
+M.S. in Artificial Intelligence, Saint Louis University, Jan 2025
+B.Tech in Computer Science, All India University, 2018
+"""
+    p = heuristic_parse(text)
+    assert p.name == "Ravindra Medicharla"
+    assert [(e.degree.rstrip(".").upper(), e.school) for e in p.education] == [
+        ("M.S", "Saint Louis University"), ("B.TECH", "All India University"),
+    ]

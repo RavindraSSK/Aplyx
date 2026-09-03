@@ -63,12 +63,16 @@ def _parse_education(lines: list[str]) -> list[Education]:
         if fm:
             field = fm.group(1).strip()
         sm = SCHOOL_RE.search(window)
-        out.append(Education(
-            degree=degree,
-            field=field,
-            school=sm.group(0).strip() if sm else None,
-            graduation_date=_grad_date(window),
-        ))
+        school = sm.group(0).strip() if sm else None
+        grad = _grad_date(window)
+        if field and len(field.split()) > 5:
+            field = None  # prose after "in ...", not a field of study
+        if not school and not grad:
+            continue  # a bare degree mention (e.g. inside a summary sentence), not an entry
+        entry = Education(degree=degree, field=field, school=school, graduation_date=grad)
+        if any(e.degree.lower() == entry.degree.lower() and e.school == entry.school for e in out):
+            continue
+        out.append(entry)
     return out
 
 
@@ -101,9 +105,30 @@ def _parse_skills(text: str) -> list[str]:
     return found
 
 
+SECTION_HEADERS = {
+    "summary", "professional summary", "objective", "profile", "about", "about me", "education",
+    "experience", "work experience", "professional experience", "skills", "technical skills",
+    "projects", "publications", "certifications", "awards", "contact", "achievements", "interests",
+}
+
+
+def _unspace(line: str) -> str:
+    """'S U M M A R Y' -> 'SUMMARY' (PDF text extraction artifact)."""
+    words = line.split()
+    if len(words) >= 3 and sum(len(w) == 1 for w in words) >= len(words) * 0.6:
+        return "".join(words)
+    return line
+
+
+def _is_section_header(line: str) -> bool:
+    return _unspace(line).strip(": ").lower() in SECTION_HEADERS
+
+
 def _parse_name(lines: list[str]) -> str | None:
-    for line in lines[:5]:
+    for line in lines[:6]:
         if "@" in line or any(ch.isdigit() for ch in line) or URL_RE.search(line):
+            continue
+        if _is_section_header(line):
             continue
         words = line.split()
         if 2 <= len(words) <= 4 and all(w[:1].isupper() for w in words if w.isalpha()):

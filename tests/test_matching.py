@@ -78,7 +78,7 @@ def _seed_job(db, **kw):
 def test_run_matching_scores_and_advances_status(db, user):
     job = _seed_job(db)
     result = run_matching(db, resume_text=RESUME, targets={"matching": RULES})
-    assert result == {"scored": 1}
+    assert result["scored"] == 1 and result["resume_source"] == "explicit"
     db.refresh(job)
     assert job.score is not None and job.score > 0
     assert job.score_reasons
@@ -89,7 +89,46 @@ def test_run_matching_skips_scored_unless_rescore_all(db, user):
     job = _seed_job(db)
     job.score = 55.0
     db.commit()
-    assert run_matching(db, resume_text=RESUME, targets={"matching": RULES}) == {"scored": 0}
+    assert run_matching(db, resume_text=RESUME, targets={"matching": RULES})["scored"] == 0
     assert run_matching(
         db, resume_text=RESUME, targets={"matching": RULES}, rescore_all=True
-    ) == {"scored": 1}
+    )["scored"] == 1
+
+
+def test_run_matching_uses_uploaded_profile_when_present(db, user, monkeypatch):
+    from app.profile.service import ingest_resume
+    from tests.test_profile import FakeClient
+
+    ingest_resume(db, user, b"Jane Doe\nSkills: Python, PyTorch, FastAPI, PostgreSQL", "r.txt", client=FakeClient())
+    job = _seed_job(db, title="Machine Learning Engineer", description="PyTorch FastAPI PostgreSQL python")
+    monkeypatch.setattr("app.matching.service.load_resume", lambda *a: (_ for _ in ()).throw(AssertionError("must not read resume.md")))
+    result = run_matching(db, targets={"matching": {}}, user_id=user.id)
+    assert result["resume_source"] == "profile"
+    db.refresh(job)
+    assert job.score > 0
+
+
+def test_run_matching_falls_back_to_resume_file_without_profile(db, user, monkeypatch):
+    _seed_job(db)
+    monkeypatch.setattr("app.matching.service.load_resume", lambda *a: RESUME)
+    result = run_matching(db, targets={"matching": RULES}, user_id=user.id)
+    assert result["resume_source"] == "resume.md"
+
+
+def test_empty_required_keywords_use_vertical_role_families():
+    from app.matching.service import effective_rules
+
+    rules = effective_rules({"required_title_keywords": []})
+    assert "machine learning engineer" in rules["required_title_keywords"]
+    assert "data scientist" in rules["required_title_keywords"]
+    # explicit lists are kept as-is
+    assert effective_rules({"required_title_keywords": ["x"]})["required_title_keywords"] == ["x"]
+
+
+def test_long_keyword_list_gets_short_reason():
+    from app.matching.service import effective_rules
+
+    rules = effective_rules({})
+    r = apply_rules("Account Executive", "sell", "NY", False, rules)
+    assert not r.passed
+    assert "target-role titles" in r.reasons[0]

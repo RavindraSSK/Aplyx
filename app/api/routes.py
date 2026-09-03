@@ -27,8 +27,8 @@ def discover(db: Session = Depends(get_db), user: User = Depends(current_user)):
 
 
 @router.post("/match/run")
-def match(rescore_all: bool = False, db: Session = Depends(get_db)):
-    return run_matching(db, rescore_all=rescore_all)
+def match(rescore_all: bool = False, db: Session = Depends(get_db), user: User = Depends(current_user)):
+    return run_matching(db, rescore_all=rescore_all, user_id=user.id)
 
 
 @router.get("/jobs", response_model=list[JobOut])

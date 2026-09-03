@@ -16,18 +16,20 @@ companies:
 
 # Rule filters applied during matching (all optional).
 matching:
-  # Title must contain at least one of these (case-insensitive):
-  required_title_keywords:
-    - engineer
-    - developer
+  # Title must contain at least one of these (case-insensitive).
+  # Leave EMPTY to accept any title synonym from config/vertical/<vertical>/role_families.yaml
+  # (every AI-related role family) - recommended.
+  required_title_keywords: []
   # Any of these in the title or description disqualifies the job (score 0):
   excluded_keywords:
-    - senior staff
     - "10+ years"
+    - "8+ years"
     - clearance
-  # Allowed locations (substring match). Remote jobs always pass:
-  locations:
-    - san francisco
-    - new york
+    - staff engineer
+    - principal
+    - director
+  # Allowed locations (substring match). Remote jobs always pass.
+  # Leave EMPTY for all locations (US-wide search):
+  locations: []
   # If true, the description must mention visa sponsorship:
   must_mention_sponsorship: false
